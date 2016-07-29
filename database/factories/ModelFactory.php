@@ -11,7 +11,7 @@
 |
 */
 
-$factory->define(Trades\User::class, function (Faker\Generator $faker) {
+$factory->define(App\User::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->safeEmail,
@@ -20,7 +20,7 @@ $factory->define(Trades\User::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(Trades\Trade::class, function (Faker\Generator $faker) {
+$factory->define(App\Trade::class, function (Faker\Generator $faker) {
     return [
         //'user_id' => $faker->name,
         'email' => $faker->safeEmail,

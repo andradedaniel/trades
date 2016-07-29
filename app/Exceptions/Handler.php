@@ -1,6 +1,6 @@
 <?php
 
-namespace Trades\Exceptions;
+namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Validation\ValidationException;
