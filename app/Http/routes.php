@@ -11,6 +11,19 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::auth();
+//Auth::loginUsingId(1, true);
+
+Route::get('/', 'HomeController@index');
+
+
+//Route::get('/home', 'HomeController@index');
+
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+
+Route::get('/register', function () {
+    //echo bcrypt('123456');
+    return "Nao é possivel realizar o registro";
 });

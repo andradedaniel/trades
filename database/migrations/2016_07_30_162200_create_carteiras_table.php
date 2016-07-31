@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAtivosTable extends Migration
+class CreateCarteirasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,14 +12,13 @@ class CreateAtivosTable extends Migration
      */
     public function up()
     {
-        Schema::create('ativos', function (Blueprint $table) {
+        Schema::create('carteiras', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->char('codigo',6);
-            $table->string('descricao')->nullable();
-            $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->unique(['codigo','user_id']);
+            $table->string('nome');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -30,6 +29,6 @@ class CreateAtivosTable extends Migration
      */
     public function down()
     {
-        Schema::drop('ativos');
+        Schema::drop('carteiras');
     }
 }

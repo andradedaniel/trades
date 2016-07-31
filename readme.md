@@ -1,27 +1,35 @@
-# Laravel PHP Framework
+# Projetos Trades
 
-[![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
-[![Total Downloads](https://poser.pugx.org/laravel/framework/d/total.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/framework/v/stable.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/framework/v/unstable.svg)](https://packagist.org/packages/laravel/framework)
-[![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/laravel/framework)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as authentication, routing, sessions, queueing, and caching.
+## Instalaçao
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb inversion of control container, expressive migration system, and tightly integrated unit testing support give you the tools you need to build any application with which you are tasked.
+Para instalação do zero deve seguir os seguintes passos:
 
-## Official Documentation
+1) git clone https://github.com/andradedaniel/trades.git
+2) composer install
+3) Comentar o codigo do arquivo vendor/acacha/admin-lte-template-laravel/src/Http/routes.php
+4) Copiar as pastas dentro do diretorio 'vendor/acacha/admin-lte-template-laravel/public' para dentro de '/public' do projeto
+   São 5 pastas (css, fonts, img, js e plugins). Cuidado para não substituir a pasta public, pois ela já possui outros arquivos.
+5) Copiar a pasta 'assets' do diretorio 'vendor/acacha/admin-lte-template-laravel/resources' para o '/resources' do projeto
 
-Documentation for the framework can be found on the [Laravel website](http://laravel.com/docs).
 
-## Contributing
+## Apenas atualização
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+Se já possui o projeto instalado a partir de clone anterior deste projeto, siga os seguintes passos:
 
-## Security Vulnerabilities
+1) Certifique que os passos 3, 4 e 5 do processo de instalaçao descritos acima estão feitos.
+2) git pull
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
 
-## License
+## Comandos Uteis
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+Excluir todas as tabelas, cria-las novamente e carregar com a massa de dados:
+php artisan migrate:refresh --seed
+
+
+
+## Links de Referencia
+
+[Laravel documentation](http://laravel.com/docs/contributions)
+https://github.com/acacha/adminlte-laravel/issues/69
+
