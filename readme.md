@@ -27,6 +27,7 @@ São 5 pastas (css, fonts, img, js e plugins). Certifique de que não foi substi
 > cp -R vendor/acacha/admin-lte-template-laravel/public/* public
 
 7. Criar as tabelas e carregar com a massa de dados
+
 > php artisan migrate --seed
 
 
