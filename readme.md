@@ -19,14 +19,16 @@ Para instalação do zero deve seguir os seguintes passos:
 
 5. Comentar o codigo do arquivo *vendor/acacha/admin-lte-template-laravel/src/Http/routes.php*
 
-6. Copiar as pastas dentro do diretorio 'vendor/acacha/admin-lte-template-laravel/public' para dentro de '/public' do projeto
-> cd _trades_
-> cp -R vendor/acacha/admin-lte-template-laravel/public/* public
-
+6. Copiar as pastas dentro do diretorio 'vendor/acacha/admin-lte-template-laravel/public' para dentro de '/public' do projeto. 
 São 5 pastas (css, fonts, img, js e plugins). Certifique de que não foi substituido toda a pasta public, pois ela já possui outros arquivos.
+
+> cd _trades_
+
+> cp -R vendor/acacha/admin-lte-template-laravel/public/* public
 
 7. Criar as tabelas e carregar com a massa de dados
 > php artisan migrate --seed
+
 
 ## Apenas atualização
 
