@@ -6,18 +6,25 @@
 Para instalação do zero deve seguir os seguintes passos:
 
 1. Clonar o projeto no github 
-> git clone https://github.com/andradedaniel/trades.git
+``` git clone https://github.com/andradedaniel/trades.git ```
+
 2. Criar o arquivo .env
 > cp .env.example .env
+
 3. Instalar as dependencias do projeto 
 > composer install
+
 4. Gerar a chave de segurança da aplicação
 > php artisan key:generate
+
 5. Comentar o codigo do arquivo *vendor/acacha/admin-lte-template-laravel/src/Http/routes.php*
+
 6. Copiar as pastas dentro do diretorio 'vendor/acacha/admin-lte-template-laravel/public' para dentro de '/public' do projeto
 > cd _trades_
 > cp -R vendor/acacha/admin-lte-template-laravel/public/* public
+
 São 5 pastas (css, fonts, img, js e plugins). Certifique de que não foi substituido toda a pasta public, pois ela já possui outros arquivos.
+
 7. Criar as tabelas e carregar com a massa de dados
 > php artisan migrate --seed
 
