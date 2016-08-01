@@ -12,16 +12,20 @@
 */
 
 Route::auth();
-//Auth::loginUsingId(1, true);
+Auth::loginUsingId(1, true);
 
 Route::get('/', 'HomeController@index');
-
+Route::get('/trades/{id}', 'TradeController@index');
 
 //Route::get('/home', 'HomeController@index');
 
 //Route::get('/', function () {
 //    return view('welcome');
 //});
+
+Route::get('/trades/ativo/{ativoId}', function ($ativoId) {
+    return "pagina com a lista dos trades do ativo ". $ativoId;
+});
 
 Route::get('/register', function () {
     //echo bcrypt('123456');

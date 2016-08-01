@@ -32,4 +32,5 @@ php artisan migrate:refresh --seed
 
 [Laravel documentation](http://laravel.com/docs/contributions)
 https://github.com/acacha/adminlte-laravel/issues/69
+https://github.com/fzaninotto/Faker
 
