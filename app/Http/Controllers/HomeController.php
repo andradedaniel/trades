@@ -9,6 +9,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 /**
  * Class HomeController
@@ -33,6 +35,19 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+//        $a = Auth::user()->carteiras;
+//        foreach ($a as $x){
+//                print_r($x->nome);
+//                //print_r($x->ativos);
+//            if ($x->ativos->isEmpty())
+//                echo 'karaiii';
+//                //$x->ativos = array('nome'=>'kkkkkk');
+////            echo $x->nome;
+////            foreach ($x->ativos as $ativo) {
+////                var_dump($x->nome);
+////
+//        }
+//        die;
+        return view('home',['carteiras' => Auth::user()->carteiras]);
     }
 }

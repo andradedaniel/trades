@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('htmlheader_title')
-	Home
+	Dashboard
 @endsection
 
 
@@ -13,7 +13,7 @@
 					<div class="panel-heading">Home</div>
 
 					<div class="panel-body">
-						{{ trans('adminlte_lang::message.logged') }}
+						{{ trans('message.logged') }}
 					</div>
 				</div>
 			</div>

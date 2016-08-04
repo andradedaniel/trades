@@ -25,7 +25,7 @@ $factory->define(App\Carteira::class, function (Faker\Generator $faker) {
     $user_id = $faker->randomElement($user_ids)->id;
 
     return [
-        'nome' => $faker->sentence(2),
+        'nome' => $faker->randomElement(array('Ações','Renda Fixa','Day Trade','Opções')),
         'user_id' => $user_id,
     ];
 });
