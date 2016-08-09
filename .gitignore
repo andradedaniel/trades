@@ -11,4 +11,6 @@ Homestead.json
 /public/img
 /public/js
 /public/plugins
+.phpstorm.meta.php
+_ide_helper.php
 

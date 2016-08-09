@@ -32,19 +32,22 @@ $factory->define(App\Carteira::class, function (Faker\Generator $faker) {
 
 $factory->define(App\Ativo::class, function (Faker\Generator $faker) {
 //    DB::table('ativos')->truncate();
-    $carteira_ids = DB::table('carteiras')->select('id')->get();
-    $carteira_id = $faker->randomElement($carteira_ids)->id;
-    $codigo_array = array('ABEV3','BBAS3','BBDC3','BBDC4','BBSE3','BRAP4','BRFS3','BRKM5',
-                        'BRML3','BVMF3','CCRO3','CESP6','CIEL3','CMIG4','CPFE3','CPLE6','CSAN3');
+//    $carteira_ids = DB::table('carteiras')->select('id')->get();
+//    $carteira_id = $faker->randomElement($carteira_ids)->id;
+    $codigo_array = array('WINQ16');
+//    $codigo_array = array('ABEV3','BBAS3','BBDC3','BBDC4','BBSE3','BRAP4','BRFS3','BRKM5',
+//                        'BRML3','BVMF3','CCRO3','CESP6','CIEL3','CMIG4','CPFE3','CPLE6','CSAN3');
     return [
-        'carteira_id' => $carteira_id,
+//        'carteira_id' => $carteira_id,
         'codigo' => $faker->randomElement($codigo_array),
         'descricao' => $faker->sentence(2,false),
     ];
 });
 
 $factory->define(App\Trade::class, function (Faker\Generator $faker) {
-    $ativo_ids = DB::table('carteiras')->select('id')->get();
+    $user_ids = DB::table('users')->select('id')->get();
+    $user_id = $faker->randomElement($user_ids)->id;
+    $ativo_ids = DB::table('ativos')->select('id')->get();
     $ativo_id = $faker->randomElement($ativo_ids)->id;
     $tipo = $faker->randomElement(array('buy','sell'));
     $preco_entrada = $faker->numberBetween(50000,57000);
@@ -59,6 +62,7 @@ $factory->define(App\Trade::class, function (Faker\Generator $faker) {
     }
 
     return [
+        'user_id' => $user_id,
         'ativo_id' => $ativo_id,
         'data' => $faker->date(),
         'tipo' => $tipo,

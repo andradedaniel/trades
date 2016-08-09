@@ -14,8 +14,8 @@ class CreateAtivosTable extends Migration
     {
         Schema::create('ativos', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('carteira_id')->unsigned();
-            $table->foreign('carteira_id')->references('id')->on('carteiras');
+            //$table->integer('carteira_id')->unsigned();
+            //$table->foreign('carteira_id')->references('id')->on('carteiras');
             $table->char('codigo',6);
             $table->string('descricao')->nullable();
             $table->timestamps();
