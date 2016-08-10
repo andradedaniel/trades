@@ -53,6 +53,7 @@ usar o codigo _Auth::loginUsingId(1, true);_ conforme consta no arquivo app/rout
 ## Links de Referencia
 
 * [Laravel documentation](http://laravel.com/docs/contributions)
-* https://github.com/acacha/adminlte-laravel/issues/69
-* https://github.com/fzaninotto/Faker
-
+* [Manual classe Faker](https://github.com/fzaninotto/Faker)
+* [Documentação classe Form:: ](https://laravelcollective.com/docs/5.2/html)
+* [Orientaçao sobre a ordem em que a a classe provider do AdminLTE e chamada](https://github.com/acacha/adminlte-laravel/issues/69)
+* http://www.easylaravelbook.com/blog/2015/02/09/creating-a-contact-form-in-laravel-5-using-the-form-request-feature/

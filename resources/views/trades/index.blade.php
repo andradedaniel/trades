@@ -9,10 +9,13 @@
 
 
 @section('main-content')
+
+    @include('trades.create')
+
     <div class="container spark-screen">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
-                <button id="singlebutton" name="singlebutton" class="btn btn-primary"><i class='fa fa-plus'></i><span> Adicionar Trade</span></button>
+                <button id="adicionarTrade" name="adicionarTrade" class="btn btn-primary" data-toggle="modal" data-target="#addTradeFormModal"><i class='fa fa-plus'></i><span>&nbsp;&nbsp;Adicionar Trade</span></button>
                 <br><br>
                 <div class="box box-default">
                     <div class="box-header with-border">
@@ -22,7 +25,7 @@
                         </div><!-- /.box-tools -->
                     </div><!-- /.box-header -->
                     <div class="box-body table-responsive no-padding">
-                        <table class="table table-hover">
+                        <table class="table table-hover text-center">
                             <tbody>
                                 <tr>
                                     <th>#</th>
@@ -38,7 +41,7 @@
                                 @foreach($trades as $trade)
                                     <tr>
                                         <td>{{ $count++ }}</td>
-                                        <td>{{ $trade->data }}</td>
+                                        <td>{{ $trade->data->format('d/m/Y') }}</td>
                                         <td>{{ $trade->tipo }}</td>
                                         <td>{{ $trade->preco_entrada }}</td>
                                         <td>{{ $trade->preco_saida }}</td>

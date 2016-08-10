@@ -29,6 +29,6 @@ class CreateCarteirasTable extends Migration
      */
     public function down()
     {
-//        Schema::drop('carteiras');
+        Schema::drop('carteiras');
     }
 }
