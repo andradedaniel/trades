@@ -15,4 +15,9 @@ class TradeController extends Controller
         return view('trades.index',['trades' => Auth::user()->trades()->paginate(5)]);
     }
 
+    public function store(Request $request)
+    {
+        dd($request);
+    }
+
 }
