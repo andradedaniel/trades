@@ -50,26 +50,53 @@ $factory->define(App\Trade::class, function (Faker\Generator $faker) {
     $ativo_ids = DB::table('ativos')->select('id')->get();
     $ativo_id = $faker->randomElement($ativo_ids)->id;
     $tipo = $faker->randomElement(array('buy','sell'));
-    $preco_entrada = $faker->numberBetween(50000,57000);
-    $preco_saida = $faker->optional(0.7)->numberBetween(50000,57000);
+//    $preco_entrada = $faker->numberBetween(50000,57000);
+//    $preco_saida = $faker->optional(0.7)->numberBetween(50000,57000);
     $resultado = '';
     $lucro_prejuizo = '';
-    if ( ! is_null($preco_saida)){
-        $resultado = $preco_entrada - $preco_saida;
-        if ($tipo=='buy')
-            $resultado = $preco_saida - $preco_entrada;
-        $lucro_prejuizo = $resultado*0.2;
-    }
+//    if ( ! is_null($preco_saida)){
+//        $resultado = $preco_entrada - $preco_saida;
+//        if ($tipo=='buy')
+//            $resultado = $preco_saida - $preco_entrada;
+//        $lucro_prejuizo = $resultado*0.2;
+//    }
 
     return [
         'user_id' => $user_id,
         'ativo_id' => $ativo_id,
-        'data' => $faker->date(),
+//        'data' => $faker->date(),
+        'data' => date('Y-m-d', strtotime( '-'.mt_rand(0,30).' days')),
         'tipo' => $tipo,
-        'preco_entrada' => $preco_entrada,
-        'preco_saida' => $preco_saida,
+//        'preco_entrada' => $preco_entrada,
+//        'preco_saida' => $preco_saida,
+//        'volume' => $faker->numberBetween(1,20),
+//        'resultado' => $resultado,
+//        'lucro_prejuizo' => $lucro_prejuizo,
+    ];
+});
+
+
+$factory->define(App\TradeEntrada::class, function (Faker\Generator $faker) {
+    $trade_ids = DB::table('trades')->select('id')->get();
+    $trade_id = $faker->randomElement($trade_ids)->id;
+    $preco = $faker->numberBetween(50000,57000);
+
+    return [
+        'trade_id' => $trade_id,
+        'preco' => $preco,
         'volume' => $faker->numberBetween(1,20),
-        'resultado' => $resultado,
-        'lucro_prejuizo' => $lucro_prejuizo,
+    ];
+});
+
+
+$factory->define(App\TradeSaida::class, function (Faker\Generator $faker) {
+    $trade_ids = DB::table('trades')->select('id')->get();
+    $trade_id = $faker->randomElement($trade_ids)->id;
+    $preco = $faker->numberBetween(50000,57000);
+
+    return [
+        'trade_id' => $trade_id,
+        'preco' => $preco,
+        'volume' => $faker->numberBetween(1,20),
     ];
 });

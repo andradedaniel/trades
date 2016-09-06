@@ -20,9 +20,7 @@ class CreateTradesTable extends Migration
             $table->foreign('ativo_id')->references('id')->on('ativos');
             $table->date('data');
             $table->enum('tipo', ['buy', 'sell']);
-            $table->float('preco_entrada');
-            $table->float('preco_saida')->nullable();
-            $table->integer('volume')->unsigned();
+            $table->boolean('trade_aberto')->default(true);
             $table->float('resultado')->nullable();
             $table->decimal('lucro_prejuizo',5,2)->nullable();
             $table->timestamps();
