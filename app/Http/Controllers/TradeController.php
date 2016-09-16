@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Trade;
+use App\TradeEntrada;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,7 +27,7 @@ class TradeController extends Controller
             }
             $trade->setQtdTotalEntradas($qtdEntradas);
             $trade->setVolumeTotalEntrada($volumeTotalEntrada);
-            $trade->setPrecoMedioEntrada(round($somaPrecosEntradas/$qtdEntradas,2));
+            $trade->setPrecoMedioEntrada(round($somaPrecosEntradas/($qtdEntradas == 0 ? 1 : $qtdEntradas) ,2));
 
 
             $volumeTotalSaida = 0;
@@ -40,7 +42,7 @@ class TradeController extends Controller
             }
             $trade->setQtdTotalSaidas($qtdSaidas);
             $trade->setVolumeTotalSaida($volumeTotalSaida);
-            $trade->setPrecoMedioSaida(round($somaPrecosSaidas/$qtdSaidas,2));
+            $trade->setPrecoMedioSaida(round($somaPrecosSaidas/($qtdSaidas == 0 ? 1 : $qtdSaidas),2));
 
             $volumeEmAberto = $volumeTotalEntrada - $volumeTotalSaida;
             $trade->setVolumeEmAberto($volumeEmAberto);
@@ -55,7 +57,20 @@ class TradeController extends Controller
 
     public function store(Request $request)
     {
-        dd($request);
+//        dd($request);
+        $trade = new Trade();
+        $trade->ativo_id = 1;
+        $trade->data = $request->data;
+        $trade->tipo = $request->tipo;
+
+        $trade = Auth::user()->trades()->save($trade);
+        $tradeEntrada = new TradeEntrada();
+        $tradeEntrada->preco = $request->preco_entrada;
+        $tradeEntrada->volume = $request->volume;
+        $trade->tradeEntradas()->save($tradeEntrada);
+
+        return redirect()->route('trades.index');
+
     }
 
 }

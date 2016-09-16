@@ -15,7 +15,7 @@ Route::auth();
 Auth::loginUsingId(2, true);
 
 Route::get('/', 'HomeController@index');
-Route::get('/trades/{id?}', 'TradeController@index');
+Route::get('/trades/{id?}', 'TradeController@index')->name('trades.index');
 Route::post('/trades', 'TradeController@store');
 //Route::get('/home', 'HomeController@index');
 
