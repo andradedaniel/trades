@@ -14,10 +14,10 @@
     @include('trades.close_trade')
 
     {{--<button id="adicionarTrade" name="adicionarTrade" class="btn btn-primary" data-toggle="modal" data-target="#addTradeFormModal"><i class='fa fa-plus'></i><span>&nbsp;&nbsp;Adicionar Trade</span></button>--}}
-
     <div class="container spark-screen">
         <div class="row" style="margin-bottom: 5px;">
             <div class="col-md-10">
+    @if(!$trades->isEmpty())
                 <div class="col-sm-2"><strong>Data</strong></div>
                 <div class="col-sm-1">Tipo</div>
                 <div class="col-sm-1 text-right">Entrada</div>
@@ -62,7 +62,7 @@
                                 <div class="col-sm-3 text-center"><h4 class="panel-title">R$ 3234,00</h4></div>
                                 <div class="col-sm-1 text-right"><h4 class="panel-title">
                                         <a href="" title= "Encerrar / Realizar Parcial" id="closeTrade" name="closeTrade" data-toggle="modal" data-target="#closeTradeFormModal"><i class='fa fa-check fa-3' aria-hidden="true"></i></a>&nbsp;&nbsp;
-                                        <a href="" id="addEntradaTrade" name="addEntradaTrade" data-toggle="modal" data-target="#addEntradaTradeFormModal"><i class='fa fa-plus fa-3' aria-hidden="true"></i>
+                                        <a href="" id="addEntradaTrade" name="addEntradaTrade" data-toggle="modal" data-target="#addEntradaTradeFormModal"><i class="fa fa-plus fa-3" aria-hidden="true"></i></a></h4>
                                 </div>
                             </div>
                         </div>
@@ -122,4 +122,7 @@
             </div>
         </div>
     </div>
+    @else
+        <h3>Não tem trades cadastrado!</h3>
+    @endif
 @endsection

@@ -12,7 +12,7 @@
 */
 
 Route::auth();
-Auth::loginUsingId(2, true);
+Auth::loginUsingId(1, true);
 
 Route::get('/', 'HomeController@index');
 Route::get('/trades/{id?}', 'TradeController@index')->name('trades.index');
