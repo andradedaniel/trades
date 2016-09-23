@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTradeSaidasTable extends Migration
+class CreateTradeOperacoesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,12 +12,16 @@ class CreateTradeSaidasTable extends Migration
      */
     public function up()
     {
-        Schema::create('trade_saidas', function (Blueprint $table) {
+        Schema::create('trade_operacoes', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('trade_id')->unsigned();
             $table->foreign('trade_id')->references('id')->on('trades');
+            $table->enum('tipo', ['buy', 'sell']);
+            $table->enum('in_or_out', ['in', 'out']);
             $table->float('preco');
-            $table->integer('volume')->unsigned();
+            $table->integer('volume');//->unsigned();
+            $table->float('resultado')->nullable();
+            $table->float('lucro_prejuizo')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +33,6 @@ class CreateTradeSaidasTable extends Migration
      */
     public function down()
     {
-        Schema::drop('trade_saidas');
+        Schema::drop('trade_entradas');
     }
 }

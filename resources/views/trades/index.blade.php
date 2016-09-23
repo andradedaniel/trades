@@ -20,9 +20,9 @@
     @if(!$trades->isEmpty())
                 <div class="col-sm-2"><strong>Data</strong></div>
                 <div class="col-sm-1">Tipo</div>
-                <div class="col-sm-1 text-right">Entrada</div>
-                <div class="col-sm-1 text-center"></div>
-                <div class="col-sm-1">Saida</div>
+                <div class="col-sm-2 text-right">PM Entrada</div>
+                {{--<div class="col-sm-1 text-center"></div>--}}
+                {{--<div class="col-sm-1">Saida</div>--}}
                 <div class="col-sm-1">Volume</div>
                 <div class="col-sm-1">Resultado</div>
                 <div class="col-sm-3 text-center">Lucro/Prejuizo</div>
@@ -48,18 +48,19 @@
                                     </h4>
                                 </div>
                                 <div class="col-sm-1">
+                                    {{--Melhorar para if ternario--}}
                                     @if ($trade->tipo == 'buy')
                                         <h4 class="panel-title" style="color: blue;"><i class='fa fa-arrow-up fa-3' aria-hidden="true"></i></h4>
                                     @else
                                         <h4 class="panel-title" style="color: red;"><i class='fa fa-arrow-down fa-3' aria-hidden="true"></i></h4>
                                     @endif
                                 </div>
-                                <div class="col-sm-1 text-right"><h4 class="panel-title"><a data-toggle="collapse" href="#collapse{{$countCollapse}}">{{ $trade->getPrecoMedioEntrada() }}</a></h4></div>
-                                <div class="col-sm-1 text-center"><h4 class="panel-title"><i class='fa fa-long-arrow-right fa-3' aria-hidden="true"></i></h4></div>
-                                <div class="col-sm-1"><h4 class="panel-title">saida</h4></div>
-                                <div class="col-sm-1"><h4 class="panel-title">{{ $trade->getVolumeTotalEntrada() }}</h4></div>
+                                <div class="col-sm-1 text-right"><h4 class="panel-title"><a data-toggle="collapse" href="#collapse{{$countCollapse}}">{{ $trade->preco_medio }}</a></h4></div>
+                                {{--<div class="col-sm-1 text-center"><h4 class="panel-title"><i class='fa fa-long-arrow-right fa-3' aria-hidden="true"></i></h4></div>--}}
+                                {{--<div class="col-sm-1"><h4 class="panel-title">saida</h4></div>--}}
+                                <div class="col-sm-1"><h4 class="panel-title">{{ $trade->volume }}</h4></div>
                                 <div class="col-sm-1"><h4 class="panel-title">result</h4></div>
-                                <div class="col-sm-3 text-center"><h4 class="panel-title">R$ 3234,00</h4></div>
+                                <div class="col-sm-3 text-center"><h4 class="panel-title">R$ 0,00</h4></div>
                                 <div class="col-sm-1 text-right"><h4 class="panel-title">
                                         <a href="" title= "Encerrar / Realizar Parcial" id="closeTrade" name="closeTrade" data-toggle="modal" data-target="#closeTradeFormModal"><i class='fa fa-check fa-3' aria-hidden="true"></i></a>&nbsp;&nbsp;
                                         <a href="" id="addEntradaTrade" name="addEntradaTrade" data-toggle="modal" data-target="#addEntradaTradeFormModal"><i class="fa fa-plus fa-3" aria-hidden="true"></i></a></h4>
@@ -82,26 +83,23 @@
                                             {{--<th>Lucro/Prejuizo</th>--}}
                                         {{--</tr>--}}
                                         <?php  $count = 1; ?>
-                                        @foreach($trade->tradeEntradas as $key => $entrada)
+                                        @foreach($trade->tradeOperacao as $operacao)
                                             <tr>
                                                 <td>{{ $count }}</td>
-                                                {{--<td>{{ $trade->data->format('d/m/Y') }}</td>--}}
-                                                {{--<td>{{ $trade->tipo }}</td>--}}
-                                                <td>{{ $entrada->preco }}</td>
-                                                <td><h4 class="panel-title"><i class='fa fa-long-arrow-right fa-3' aria-hidden="true"></i></h4></td>
-                                                @if($key < $trade->getQtdTotalSaidas())
-                                                    <?php $precoSaida = $trade->tradeSaidas[$key]['preco'];
-                                                            $resultado = ($trade->tipo == 'buy') ? $trade->tradeSaidas[$key]['preco'] - $entrada->preco : $entrada->preco - $trade->tradeSaidas[$key]['preco']; ?>
-                                                    <td>{{ $precoSaida }}</td>
-                                                    <td>{{ $entrada->volume }}</td>
-                                                    <td>{{ $resultado }}</td>
-                                                    <td><span class="label {{$resultado > 0 ? 'label-success' : 'label-danger'}}">{{ number_format($resultado * $entrada->volume * 0.2, 2, ',', '.') }}</span></td>
-                                                @else
-                                                    <td>0</td>
-                                                    <td>{{ $entrada->volume }}</td>
-                                                    <td>0</td>
-                                                    <td><span class="label label-default">R$ 0,00</span></td>
-                                                @endif
+                                                <td>{{ $operacao->tipo.', '.$operacao->in_or_out }}</td>
+
+                                                <td>{{ $operacao->preco }}</td>
+{{--                                                @if($key < $trade->getQtdTotalSaidas())--}}
+                                                <td>{{ $operacao->volume }}</td>
+                                                <?php $resultado = 10;/*($trade->tipo == 'buy') ? $trade->tradeSaidas[$key]['preco'] - $entrada->preco : $entrada->preco - $trade->tradeSaidas[$key]['preco'];*/ ?>
+                                                <td>{{ $operacao->resultado }}</td>
+                                                    <td><span class="label {{$operacao->lucro_prejuizo > 0 ? 'label-success' : 'label-danger'}}">{{ number_format($operacao->lucro_prejuizo, 2, ',', '.') }}</span></td>
+                                                {{--@else--}}
+                                                    {{--<td>0</td>--}}
+                                                    {{--<td>{{ $entrada->volume }}</td>--}}
+                                                    {{--<td>0</td>--}}
+                                                    {{--<td><span class="label label-default">R$ 0,00</span></td>--}}
+                                                {{--@endif--}}
                                                 <td><a href="{{ url('/trade/edit') }}"><i class='fa fa-pencil fa-3' aria-hidden="true"></i></a></td>
                                             </tr>
                                             <?php $count++ ?>
