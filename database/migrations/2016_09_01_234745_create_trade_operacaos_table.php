@@ -12,7 +12,7 @@ class CreateTradeOperacoesTable extends Migration
      */
     public function up()
     {
-        Schema::create('trade_operacoes', function (Blueprint $table) {
+        Schema::create('trade_operacaos', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('trade_id')->unsigned();
             $table->foreign('trade_id')->references('id')->on('trades');
@@ -33,6 +33,6 @@ class CreateTradeOperacoesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('trade_entradas');
+        Schema::drop('trade_operacaos');
     }
 }
