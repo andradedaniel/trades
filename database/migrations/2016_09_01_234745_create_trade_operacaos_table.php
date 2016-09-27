@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTradeOperacoesTable extends Migration
+class CreateTradeOperacaosTable extends Migration
 {
     /**
      * Run the migrations.

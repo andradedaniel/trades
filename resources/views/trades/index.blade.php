@@ -24,7 +24,7 @@
                 {{--<div class="col-sm-1 text-center"></div>--}}
                 {{--<div class="col-sm-1">Saida</div>--}}
                 <div class="col-sm-1">Volume</div>
-                <div class="col-sm-1">Resultado</div>
+                <div class="col-sm-2">Resultado</div>
                 <div class="col-sm-3 text-center">Lucro/Prejuizo</div>
                 <div class="col-sm-1 text-right"></div>
             </div>
@@ -55,12 +55,12 @@
                                         <h4 class="panel-title" style="color: red;"><i class='fa fa-arrow-down fa-3' aria-hidden="true"></i></h4>
                                     @endif
                                 </div>
-                                <div class="col-sm-1 text-right"><h4 class="panel-title"><a data-toggle="collapse" href="#collapse{{$countCollapse}}">{{ $trade->preco_medio }}</a></h4></div>
+                                <div class="col-sm-2 text-right"><h4 class="panel-title"><a data-toggle="collapse" href="#collapse{{$countCollapse}}">{{ $trade->preco_medio }}</a></h4></div>
                                 {{--<div class="col-sm-1 text-center"><h4 class="panel-title"><i class='fa fa-long-arrow-right fa-3' aria-hidden="true"></i></h4></div>--}}
                                 {{--<div class="col-sm-1"><h4 class="panel-title">saida</h4></div>--}}
                                 <div class="col-sm-1"><h4 class="panel-title">{{ $trade->volume }}</h4></div>
-                                <div class="col-sm-1"><h4 class="panel-title">result</h4></div>
-                                <div class="col-sm-3 text-center"><h4 class="panel-title">R$ 0,00</h4></div>
+                                <div class="col-sm-2"><h4 class="panel-title">{{ $trade->resultado }}</h4></div>
+                                <div class="col-sm-3 text-center"><h4 class="panel-title">R$ {{ $trade->lucro_prejuizo }}</h4></div>
                                 <div class="col-sm-1 text-right"><h4 class="panel-title">
                                         <a href="" title= "Encerrar / Realizar Parcial" id="closeTrade" name="closeTrade" data-toggle="modal" data-target="#closeTradeFormModal"><i class='fa fa-check fa-3' aria-hidden="true"></i></a>&nbsp;&nbsp;
                                         <a href="" id="addEntradaTrade" name="addEntradaTrade" data-toggle="modal" data-target="#addEntradaTradeFormModal"><i class="fa fa-plus fa-3" aria-hidden="true"></i></a></h4>

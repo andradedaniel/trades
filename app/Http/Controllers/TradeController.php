@@ -64,6 +64,7 @@ class TradeController extends Controller
         //TODO: colocar try/catch
         //TODO: verificar se retornou mais de um trade aberto. Pois nao deve ser possivel $var->count()
         //TODO: verificar se o volume informado eh maior do q o volume em aberto
+        //TODO: validar a data, se eh diferente da do trante aberto
 
         //        dd($request->all());
         //verifica se tem trade aberto:
@@ -75,15 +76,17 @@ class TradeController extends Controller
             $tradeOperacao->volume = $request->volume;
             if ($tradeAberto->tipo != $request->tipo) //se eh diferente, eh pq ta fechando o trade
             {
+                $invertForBuy = ($tradeAberto->tipo=='buy' ? -1 : 1);
                 $tradeOperacao->in_or_out = 'out';
                 $tradeOperacao->preco = $request->preco;
-                $tradeOperacao->resultado = $tradeAberto->preco_medio - $request->preco;
+                $tradeOperacao->resultado = ($tradeAberto->preco_medio - $request->preco) * $invertForBuy;
                 $tradeOperacao->lucro_prejuizo = $tradeOperacao->resultado * $request->volume * 0.2;
                 if ($tradeAberto->volume_aberto == $request->volume)
                 {
+                    $tradeAberto->resultado = ($tradeAberto->preco_medio - $request->preco) * $invertForBuy;
+                    $tradeAberto->lucro_prejuizo = $tradeAberto->resultado * $tradeAberto->volume * 0.2;
+                    $tradeAberto->volume_aberto = 0;
                     $tradeAberto->trade_aberto = 'false';
-                    $tradeAberto->resultado = $tradeAberto->preco_medio - $request->preco;
-                    $tradeAberto->lucro_prejuizo = $tradeOperacao->resultado * $request->volume * 0.2;
                 }
                 else
                 {
