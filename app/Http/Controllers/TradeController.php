@@ -93,7 +93,6 @@ class TradeController extends Controller
                     $tradeAberto->volume_aberto -= $request->volume;
                 }
 
-
                 \DB::transaction(function () use ($tradeAberto,$tradeOperacao) {
                     $tradeAberto->save();
                     $tradeAberto->tradeOperacao()->save($tradeOperacao);
@@ -107,8 +106,6 @@ class TradeController extends Controller
                 $tradeAberto->volume += $request->volume;
 
             }
-
-
         }
         else
         {
@@ -135,14 +132,26 @@ class TradeController extends Controller
 
         }
 
-
-
-
-
-
-
         return redirect()->route('trades.index');
 
     }
 
+    public function destroy($id)
+    {
+        //TODO: verificar se a operaçao eh do usuario logado
+        $operacao = TradeOperacao::find($id);
+        if ($operacao->in_or_out == 'in')
+        {
+            $trade = Trade::find($operacao->trade_id);
+            $trade->volume -= $operacao->volume;
+            $trade->volume_aberto -= $operacao->volume;
+        }
+        else
+            echo 'outttt';
+        return;
+        dd($operacao);
+    }
+
 }
+
+

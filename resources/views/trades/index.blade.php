@@ -67,7 +67,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="collapse{{$countCollapse}}" class="panel-collapse collapse">
+                        <div id="collapse{{$countCollapse}}" class="panel-collapse collapse {{ $trade->trade_aberto ? 'in' : '' }}">
                             <div class="panel-body">
                                 <div class="box-body table-responsive no-padding">
                                     <table class="table table-hover text-center">
@@ -91,7 +91,7 @@
                                                 <td>{{ $operacao->preco }}</td>
 {{--                                                @if($key < $trade->getQtdTotalSaidas())--}}
                                                 <td>{{ $operacao->volume }}</td>
-                                                <?php $resultado = 10;/*($trade->tipo == 'buy') ? $trade->tradeSaidas[$key]['preco'] - $entrada->preco : $entrada->preco - $trade->tradeSaidas[$key]['preco'];*/ ?>
+
                                                 <td>{{ $operacao->resultado }}</td>
                                                     <td><span class="label {{$operacao->lucro_prejuizo > 0 ? 'label-success' : 'label-danger'}}">{{ number_format($operacao->lucro_prejuizo, 2, ',', '.') }}</span></td>
                                                 {{--@else--}}
@@ -100,7 +100,7 @@
                                                     {{--<td>0</td>--}}
                                                     {{--<td><span class="label label-default">R$ 0,00</span></td>--}}
                                                 {{--@endif--}}
-                                                <td><a href="{{ url('/trade/edit') }}"><i class='fa fa-pencil fa-3' aria-hidden="true"></i></a></td>
+                                                <td><a href="{{ url('/trade/apagar/'.$operacao->id.'/') }}"><i class='fa fa-times fa-3' aria-hidden="true"></i></a></td>
                                             </tr>
                                             <?php $count++ ?>
                                         @endforeach
