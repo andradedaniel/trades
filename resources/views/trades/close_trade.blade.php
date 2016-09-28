@@ -6,7 +6,7 @@
                 <h4 class="modal-title" id="myModalLabel">Encerrar / Realizar Parcial</h4>
             </div>
             <div class="modal-body">
-                {!! Form::open(array('url' => '/trades')) !!}
+                {!! Form::open(array('url' => '/trade/close/{idTrade}')) !!}
                 <div class="form-group">
                     {{ Form::label('volume', 'Volume') }}
                     {{ Form::number('volume', '8',array('class'=>'form-control')) }}
@@ -27,3 +27,4 @@
         </div>
     </div>
 </div>
+

@@ -136,20 +136,23 @@ class TradeController extends Controller
 
     }
 
-    public function destroy($id)
+    public function encerrarTrade(Request $request)
+    {
+        dd($request);
+    }
+
+
+    public function destroy($idTrade)
     {
         //TODO: verificar se a operaçao eh do usuario logado
-        $operacao = TradeOperacao::find($id);
-        if ($operacao->in_or_out == 'in')
-        {
-            $trade = Trade::find($operacao->trade_id);
-            $trade->volume -= $operacao->volume;
-            $trade->volume_aberto -= $operacao->volume;
-        }
-        else
-            echo 'outttt';
-        return;
-        dd($operacao);
+        //TODO: Usar try/catch
+        //TODO: mostrar msg de confirmação antes de apagar
+        \DB::transaction(function () use ($idTrade) {
+            TradeOperacao::where('trade_id',$idTrade)->delete();
+            Trade::destroy($idTrade);
+        });
+
+        return redirect()->route('trades.index');
     }
 
 }

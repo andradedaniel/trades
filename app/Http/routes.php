@@ -15,9 +15,10 @@ Route::auth();
 Auth::loginUsingId(1, true);
 
 Route::get('/', 'HomeController@index');
-Route::get('/trades/', 'TradeController@index')->name('trades.index');
-Route::get('/trade/apagar/{id}', 'TradeController@destroy')->name('trades.destroy');
+Route::get('/trades', 'TradeController@index')->name('trades.index');
 Route::post('/trades', 'TradeController@store');
+Route::get('/trade/apagar/{idTrade}', 'TradeController@destroy');
+Route::post('/trade/close/{idTrade}', 'TradeController@encerrarTrade');
 //Route::get('/home', 'HomeController@index');
 
 //Route::get('/', function () {

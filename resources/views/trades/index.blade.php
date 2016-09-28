@@ -25,8 +25,8 @@
                 {{--<div class="col-sm-1">Saida</div>--}}
                 <div class="col-sm-1">Volume</div>
                 <div class="col-sm-2">Resultado</div>
-                <div class="col-sm-3 text-center">Lucro/Prejuizo</div>
-                <div class="col-sm-1 text-right"></div>
+                <div class="col-sm-2 text-center">Lucro/Prejuizo</div>
+                <div class="col-sm-2 text-right"></div>
             </div>
 
         </div>
@@ -60,10 +60,11 @@
                                 {{--<div class="col-sm-1"><h4 class="panel-title">saida</h4></div>--}}
                                 <div class="col-sm-1"><h4 class="panel-title">{{ $trade->volume }}</h4></div>
                                 <div class="col-sm-2"><h4 class="panel-title">{{ $trade->resultado }}</h4></div>
-                                <div class="col-sm-3 text-center"><h4 class="panel-title">R$ {{ $trade->lucro_prejuizo }}</h4></div>
-                                <div class="col-sm-1 text-right"><h4 class="panel-title">
+                                <div class="col-sm-2 text-center"><h4 class="panel-title">R$ {{ $trade->lucro_prejuizo }}</h4></div>
+                                <div class="col-sm-2 text-right"><h4 class="panel-title">
                                         <a href="" title= "Encerrar / Realizar Parcial" id="closeTrade" name="closeTrade" data-toggle="modal" data-target="#closeTradeFormModal"><i class='fa fa-check fa-3' aria-hidden="true"></i></a>&nbsp;&nbsp;
-                                        <a href="" id="addEntradaTrade" name="addEntradaTrade" data-toggle="modal" data-target="#addEntradaTradeFormModal"><i class="fa fa-plus fa-3" aria-hidden="true"></i></a></h4>
+                                        <a href="" id="addEntradaTrade" class="teste" name="addEntradaTrade" data-toggle="modal" data-target="#addEntradaTradeFormModal"><i class="fa fa-plus fa-3" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                                        <a href="{{ url('/trade/apagar/'.$trade->id) }}" id="excluir_trade" title= "Excluir Trade"><i class="fa fa-times fa-3" aria-hidden="true"></i></a></h4>
                                 </div>
                             </div>
                         </div>
@@ -100,7 +101,7 @@
                                                     {{--<td>0</td>--}}
                                                     {{--<td><span class="label label-default">R$ 0,00</span></td>--}}
                                                 {{--@endif--}}
-                                                <td><a href="{{ url('/trade/apagar/'.$operacao->id.'/') }}"><i class='fa fa-times fa-3' aria-hidden="true"></i></a></td>
+                                                {{--<td><a href="{{ url('/trade/apagar/'.$trade->id) }}"><i class='fa fa-times fa-3' aria-hidden="true"></i></a></td>--}}
                                             </tr>
                                             <?php $count++ ?>
                                         @endforeach
@@ -123,4 +124,10 @@
     @else
         <h3>Não tem trades cadastrado!</h3>
     @endif
+    <script>
+        $(document).on("click", "#closeTrade", function () {
+            alert('auau');
+
+        });
+    </script>
 @endsection
