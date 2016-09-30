@@ -17,8 +17,9 @@ Auth::loginUsingId(1, true);
 Route::get('/', 'HomeController@index');
 Route::get('/trades', 'TradeController@index')->name('trades.index');
 Route::post('/trades', 'TradeController@store');
+//TODO: renomear para excluir ao inves de apagar
 Route::get('/trade/apagar/{idTrade}', 'TradeController@destroy');
-Route::post('/trade/close/{idTrade}', 'TradeController@encerrarTrade');
+Route::post('/trade/close/', 'TradeController@encerrarTrade');
 //Route::get('/home', 'HomeController@index');
 
 //Route::get('/', function () {

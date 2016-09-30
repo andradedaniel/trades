@@ -6,8 +6,9 @@
                 <h4 class="modal-title" id="myModalLabel">Encerrar / Realizar Parcial</h4>
             </div>
             <div class="modal-body">
-                {!! Form::open(array('url' => '/trade/close/{idTrade}')) !!}
+                {!! Form::open(array('url' => '/trade/close/')) !!}
                 <div class="form-group">
+                    {{ Form::hidden('id', '',array('id'=>'tradeId')) }}
                     {{ Form::label('volume', 'Volume') }}
                     {{ Form::number('volume', '8',array('class'=>'form-control')) }}
                     {{ Form::label('preco', 'Preço de Saida') }}

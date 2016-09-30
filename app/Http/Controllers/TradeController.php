@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Gate;
 use App\Http\Requests;
 use App\Trade;
 use App\TradeOperacao;
@@ -14,53 +15,16 @@ class TradeController extends Controller
     {
         $trades = Auth::user()->trades;
 
-//        foreach($trades as $trade)
-//        {
-//            $volumeTotalEntrada = 0;
-//            $qtdEntradas = 0;
-//            $somaPrecosEntradas = 0;
-//            foreach($trade->tradeEntradas as $entrada)
-//            {
-//                $qtdEntradas++;
-//                $volumeTotalEntrada += $entrada->volume;
-//                $somaPrecosEntradas += $entrada->preco;
-//            }
-//            $trade->setQtdTotalEntradas($qtdEntradas);
-//            $trade->setVolumeTotalEntrada($volumeTotalEntrada);
-//            $trade->setPrecoMedioEntrada(round($somaPrecosEntradas/($qtdEntradas == 0 ? 1 : $qtdEntradas) ,2));
-//
-//
-//            $volumeTotalSaida = 0;
-//            $qtdSaidas = 0;
-//            $somaPrecosSaidas = 0;
-//            $volumeEmAberto = 0;
-//            foreach($trade->tradeSaidas as $saida)
-//            {
-//                $qtdSaidas++;
-//                $volumeTotalSaida += $saida->volume;
-//                $somaPrecosSaidas += $saida->preco;
-//            }
-//            $trade->setQtdTotalSaidas($qtdSaidas);
-//            $trade->setVolumeTotalSaida($volumeTotalSaida);
-//            $trade->setPrecoMedioSaida(round($somaPrecosSaidas/($qtdSaidas == 0 ? 1 : $qtdSaidas),2));
-//
-//            $volumeEmAberto = $volumeTotalEntrada - $volumeTotalSaida;
-//            $trade->setVolumeEmAberto($volumeEmAberto);
-
-
-
-//            dd($trade);
-//        }
-//        dd($trades);
-//        foreach ($trades as $trade)
-//            dd($trade->preco_medio);
-//
-//        dd($trade->tradeOperacao);
         return view('trades.index',['trades' => $trades]);
     }
 
     public function store(Request $request)
     {
+        //TODO: ver https://laravel.com/docs/5.3/validation#working-with-error-messages
+        $this->validate($request, [
+            'preco' => 'required'
+        ]);
+
         //TODO: colocar try/catch
         //TODO: verificar se retornou mais de um trade aberto. Pois nao deve ser possivel $var->count()
         //TODO: verificar se o volume informado eh maior do q o volume em aberto
@@ -125,7 +89,6 @@ class TradeController extends Controller
 
 
             \DB::transaction(function () use ($trade,$tradeOperacao) {
-
                 $trade = Auth::user()->trades()->save($trade);
                 $trade->tradeOperacao()->save($tradeOperacao);
             });
@@ -138,15 +101,70 @@ class TradeController extends Controller
 
     public function encerrarTrade(Request $request)
     {
-        dd($request);
+        //TODO: desabilitar botar de encerrar caso o trade_aberto = false
+
+        $trade = Trade::findOrFail($request->id);
+
+        //Verifica se o usuario logado tem permissao para excluir o trade
+        if (Gate::denies('update-delete-trade', $trade)) {
+            return redirect()->route('trades.index')->withErrors(['Ops! Voce nao tem permissao para alterar este trade. :(']);
+        }
+        if ( ! $trade->trade_aberto) {
+            return redirect()->route('trades.index')->withErrors(['Ops! Este trade ja esta encerrado. :(']);
+        }
+
+        $tradeOperacao = new TradeOperacao();
+        $tradeOperacao->tipo = ($trade->tipo=='buy' ? 'sell' : 'buy');
+        $tradeOperacao->volume = $request->volume;
+        $tradeOperacao->preco = $request->preco;
+        //TODO: usar try/catch
+        if ($this->encerrarTrade2($trade,$tradeOperacao))
+        {
+            return redirect()->route('trades.index');
+        }
+        return false;
+    }
+
+    private function encerrarTrade2($tradeAberto, $tradeOperacao)
+    {
+        $invertForBuy = ($tradeAberto->tipo=='buy' ? -1 : 1);
+        $tradeOperacao->in_or_out = 'out';
+//        $tradeOperacao->preco = $request->preco;
+        $tradeOperacao->resultado = ($tradeAberto->preco_medio - $tradeOperacao->preco) * $invertForBuy;
+        $tradeOperacao->lucro_prejuizo = $tradeOperacao->resultado * $tradeOperacao->volume * 0.2;
+        if ($tradeAberto->volume_aberto == $tradeOperacao->volume)
+        {
+            $tradeAberto->resultado = ($tradeAberto->preco_medio - $tradeOperacao->preco) * $invertForBuy;
+            $tradeAberto->lucro_prejuizo = $tradeAberto->resultado * $tradeAberto->volume * 0.2;
+            $tradeAberto->volume_aberto = 0;
+            $tradeAberto->trade_aberto = 'false';
+        }
+        else
+        {
+            $tradeAberto->volume_aberto -= $tradeOperacao->volume;
+        }
+        //TODO: Usar try/catch
+         \DB::transaction(function () use ($tradeAberto,$tradeOperacao) {
+            $tradeAberto->save();
+            $tradeAberto->tradeOperacao()->save($tradeOperacao);
+        });
+        return true;
+
     }
 
 
     public function destroy($idTrade)
     {
-        //TODO: verificar se a operaçao eh do usuario logado
+
+        $trade = Trade::findOrFail($idTrade);
+        //Verifica se o usuario logado tem permissao para excluir o trade
+        if (Gate::denies('update-delete-trade', $trade)) {
+            return redirect()->route('trades.index')->withErrors(['Ops! Voce nao tem permissao para remover este trade. :(']);
+        }
+
         //TODO: Usar try/catch
-        //TODO: mostrar msg de confirmação antes de apagar
+        //TODO: mostrar msg de confirmação antes de apagar:
+        // http://stackoverflow.com/questions/8982295/confirm-delete-modal-dialog-with-twitter-bootstrap
         \DB::transaction(function () use ($idTrade) {
             TradeOperacao::where('trade_id',$idTrade)->delete();
             Trade::destroy($idTrade);

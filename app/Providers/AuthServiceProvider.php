@@ -26,6 +26,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies($gate);
 
-        //
+        $gate->define('update-delete-trade', function ($user, $trade) {
+            return $user->id == $trade->user_id;
+        });
     }
 }

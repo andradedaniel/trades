@@ -9,7 +9,15 @@
 
 
 @section('main-content')
-
+    @if (count($errors) > 0)
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     @include('trades.create')
     @include('trades.close_trade')
 
@@ -62,8 +70,8 @@
                                 <div class="col-sm-2"><h4 class="panel-title">{{ $trade->resultado }}</h4></div>
                                 <div class="col-sm-2 text-center"><h4 class="panel-title">R$ {{ $trade->lucro_prejuizo }}</h4></div>
                                 <div class="col-sm-2 text-right"><h4 class="panel-title">
-                                        <a href="" title= "Encerrar / Realizar Parcial" id="closeTrade" name="closeTrade" data-toggle="modal" data-target="#closeTradeFormModal"><i class='fa fa-check fa-3' aria-hidden="true"></i></a>&nbsp;&nbsp;
-                                        <a href="" id="addEntradaTrade" class="teste" name="addEntradaTrade" data-toggle="modal" data-target="#addEntradaTradeFormModal"><i class="fa fa-plus fa-3" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                                        <a href="" title= "Encerrar / Realizar Parcial" id="closeTrade" data-id="{{ $trade->id }}" data-toggle="modal" data-target="#closeTradeFormModal"><i class='fa fa-check fa-3' aria-hidden="true"></i></a>&nbsp;&nbsp;
+                                        <a href="" id="addEntradaTrade" name="addEntradaTrade" data-toggle="modal" data-target="#addEntradaTradeFormModal"><i class="fa fa-plus fa-3" aria-hidden="true"></i></a>&nbsp;&nbsp;
                                         <a href="{{ url('/trade/apagar/'.$trade->id) }}" id="excluir_trade" title= "Excluir Trade"><i class="fa fa-times fa-3" aria-hidden="true"></i></a></h4>
                                 </div>
                             </div>
@@ -126,8 +134,8 @@
     @endif
     <script>
         $(document).on("click", "#closeTrade", function () {
-            alert('auau');
-
+            var tradeId = $(this).data('id');
+            $(".modal-body #tradeId").val( tradeId );
         });
     </script>
 @endsection
