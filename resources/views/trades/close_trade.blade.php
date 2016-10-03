@@ -10,15 +10,12 @@
                 <div class="form-group">
                     {{ Form::hidden('id', '',array('id'=>'tradeId')) }}
                     {{ Form::label('volume', 'Volume') }}
-                    {{ Form::number('volume', '8',array('class'=>'form-control')) }}
+                    {{ Form::text('volume', null,array('class'=>'form-control')) }}
                     {{ Form::label('preco', 'Preço de Saida') }}
                     {{ Form::number('preco', '',array('class'=>'form-control')) }}
                     {{--<label for="exampleInputEmail1">Email address</label>--}}
                     {{--<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">--}}
                 </div>
-
-
-
             </div>
             <div class="modal-footer">
                 {{--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>--}}

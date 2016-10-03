@@ -13,7 +13,7 @@ class TradeController extends Controller
 {
     public function index()
     {
-        $trades = Auth::user()->trades;
+        $trades = Auth::user()->trades()->orderBy('data', 'DESC')->get();
 
         return view('trades.index',['trades' => $trades]);
     }
@@ -22,13 +22,15 @@ class TradeController extends Controller
     {
         //TODO: ver https://laravel.com/docs/5.3/validation#working-with-error-messages
         $this->validate($request, [
-            'preco' => 'required'
+            'preco' => 'required',
+            'tipo' => 'required',
+            'volume' => 'required',
         ]);
 
         //TODO: colocar try/catch
         //TODO: verificar se retornou mais de um trade aberto. Pois nao deve ser possivel $var->count()
         //TODO: verificar se o volume informado eh maior do q o volume em aberto
-        //TODO: validar a data, se eh diferente da do trante aberto
+        //TODO: validar a data, se eh diferente da do trade aberto
 
         //        dd($request->all());
         //verifica se tem trade aberto:
@@ -38,36 +40,29 @@ class TradeController extends Controller
             $tradeOperacao = new TradeOperacao();
             $tradeOperacao->tipo = $request->tipo;
             $tradeOperacao->volume = $request->volume;
+            $tradeOperacao->preco = $request->preco;
             if ($tradeAberto->tipo != $request->tipo) //se eh diferente, eh pq ta fechando o trade
             {
-                $invertForBuy = ($tradeAberto->tipo=='buy' ? -1 : 1);
-                $tradeOperacao->in_or_out = 'out';
-                $tradeOperacao->preco = $request->preco;
-                $tradeOperacao->resultado = ($tradeAberto->preco_medio - $request->preco) * $invertForBuy;
-                $tradeOperacao->lucro_prejuizo = $tradeOperacao->resultado * $request->volume * 0.2;
-                if ($tradeAberto->volume_aberto == $request->volume)
-                {
-                    $tradeAberto->resultado = ($tradeAberto->preco_medio - $request->preco) * $invertForBuy;
-                    $tradeAberto->lucro_prejuizo = $tradeAberto->resultado * $tradeAberto->volume * 0.2;
-                    $tradeAberto->volume_aberto = 0;
-                    $tradeAberto->trade_aberto = 'false';
-                }
-                else
-                {
-                    $tradeAberto->volume_aberto -= $request->volume;
-                }
-
-                \DB::transaction(function () use ($tradeAberto,$tradeOperacao) {
-                    $tradeAberto->save();
-                    $tradeAberto->tradeOperacao()->save($tradeOperacao);
-                });
+                $this->encerrarTrade2($tradeAberto,$tradeOperacao);
             }
             else //se nao, esta aumentao a mao no trade
             {
+                $PMAntigo = ($tradeAberto->preco_medio * $tradeAberto->volume) + ($tradeOperacao->preco * $tradeOperacao->volume);
+
                 $tradeOperacao->in_or_out = 'in';
-                //TODO: revisar calculo de PM
-                $tradeOperacao->preco = ($tradeAberto->preco_medio * $request->volume * $request->preco) / 2;
-                $tradeAberto->volume += $request->volume;
+                $tradeAberto->volume += $tradeOperacao->volume;
+                $tradeAberto->volume_aberto += $tradeOperacao->volume;
+                $tradeAberto->preco_medio =  $PMAntigo / $tradeAberto->volume;
+
+                try {
+                    \DB::transaction(function () use ($tradeAberto, $tradeOperacao) {
+                        $tradeAberto->save();
+                        $tradeAberto->tradeOperacao()->save($tradeOperacao);
+                    });
+
+                } catch (Exception $e) {
+                    throw $e;
+                }
 
             }
         }
@@ -77,9 +72,9 @@ class TradeController extends Controller
             $trade->ativo_id = 1;
             $trade->data = $request->data;
             $trade->tipo = $request->tipo;
-            $trade->preco_medio = $request->preco;// TradeOperacao::calculaPrecoMedio($request->preco_entrada);
-            $trade->volume = $request->volume; // atualizar volume
-            $trade->volume_aberto = $request->volume; // atualizar volume em aberto
+            $trade->preco_medio = $request->preco;
+            $trade->volume = $request->volume;
+            $trade->volume_aberto = $request->volume;
 
             $tradeOperacao = new TradeOperacao();
             $tradeOperacao->tipo = $request->tipo;
@@ -102,16 +97,12 @@ class TradeController extends Controller
     public function encerrarTrade(Request $request)
     {
         //TODO: desabilitar botar de encerrar caso o trade_aberto = false
+        //TODO: verificar o q fazer com return
+        //TODO: verificar se o volume informado eh maior do q o volume em aberto
 
         $trade = Trade::findOrFail($request->id);
 
-        //Verifica se o usuario logado tem permissao para excluir o trade
-        if (Gate::denies('update-delete-trade', $trade)) {
-            return redirect()->route('trades.index')->withErrors(['Ops! Voce nao tem permissao para alterar este trade. :(']);
-        }
-        if ( ! $trade->trade_aberto) {
-            return redirect()->route('trades.index')->withErrors(['Ops! Este trade ja esta encerrado. :(']);
-        }
+
 
         $tradeOperacao = new TradeOperacao();
         $tradeOperacao->tipo = ($trade->tipo=='buy' ? 'sell' : 'buy');
@@ -127,29 +118,44 @@ class TradeController extends Controller
 
     private function encerrarTrade2($tradeAberto, $tradeOperacao)
     {
+        //Verifica se o usuario logado tem permissao para atualizar o trade
+        if (Gate::denies('update-delete-trade', $tradeAberto)) {
+            return redirect()->route('trades.index')->withErrors(['Ops! Voce nao tem permissao para alterar este trade. :(']);
+        }
+        if ( ! $tradeAberto->trade_aberto) {
+            return redirect()->route('trades.index')->withErrors(['Ops! Este trade ja esta encerrado. :(']);
+        }
+        if ($tradeOperacao->volume > $tradeAberto->volume_aberto){
+            return redirect()->route('trades.index')->withInput()-> withErrors(['Ops! Informe um volume menor ou igual ao volume em aberto. :(']);
+        }
         $invertForBuy = ($tradeAberto->tipo=='buy' ? -1 : 1);
         $tradeOperacao->in_or_out = 'out';
-//        $tradeOperacao->preco = $request->preco;
         $tradeOperacao->resultado = ($tradeAberto->preco_medio - $tradeOperacao->preco) * $invertForBuy;
         $tradeOperacao->lucro_prejuizo = $tradeOperacao->resultado * $tradeOperacao->volume * 0.2;
-        if ($tradeAberto->volume_aberto == $tradeOperacao->volume)
-        {
-            $tradeAberto->resultado = ($tradeAberto->preco_medio - $tradeOperacao->preco) * $invertForBuy;
-            $tradeAberto->lucro_prejuizo = $tradeAberto->resultado * $tradeAberto->volume * 0.2;
-            $tradeAberto->volume_aberto = 0;
-            $tradeAberto->trade_aberto = 'false';
-        }
-        else
-        {
-            $tradeAberto->volume_aberto -= $tradeOperacao->volume;
-        }
-        //TODO: Usar try/catch
-         \DB::transaction(function () use ($tradeAberto,$tradeOperacao) {
-            $tradeAberto->save();
-            $tradeAberto->tradeOperacao()->save($tradeOperacao);
-        });
-        return true;
+//        if ($tradeAberto->volume_aberto == $tradeOperacao->volume) {
+//            $tradeAberto->resultado = ($tradeAberto->preco_medio - $tradeOperacao->preco) * $invertForBuy;
+//            $tradeAberto->lucro_prejuizo = $tradeAberto->resultado * $tradeAberto->volume * 0.2;
+//            $tradeAberto->volume_aberto = 0;
+//            $tradeAberto->trade_aberto = 'false';
+//        } else {
+//            $tradeAberto->volume_aberto -= $tradeOperacao->volume;
+//        }
 
+        $tradeAberto->resultado = ($tradeAberto->preco_medio - $tradeOperacao->preco) * $invertForBuy;
+        $tradeAberto->lucro_prejuizo += $tradeOperacao->lucro_prejuizo;
+        $tradeAberto->volume_aberto -= $tradeOperacao->volume;
+        if ($tradeAberto->volume_aberto == 0)
+            $tradeAberto->trade_aberto = 'false';
+
+        try {
+            \DB::transaction(function () use ($tradeAberto, $tradeOperacao) {
+                $tradeAberto->save();
+                $tradeAberto->tradeOperacao()->save($tradeOperacao);
+            });
+            return true;
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
 
@@ -174,5 +180,3 @@ class TradeController extends Controller
     }
 
 }
-
-

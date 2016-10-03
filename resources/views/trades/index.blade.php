@@ -20,6 +20,7 @@
     @endif
     @include('trades.create')
     @include('trades.close_trade')
+    @include('trades.partials.modal_confirm_exluir_trade')
 
     {{--<button id="adicionarTrade" name="adicionarTrade" class="btn btn-primary" data-toggle="modal" data-target="#addTradeFormModal"><i class='fa fa-plus'></i><span>&nbsp;&nbsp;Adicionar Trade</span></button>--}}
     <div class="container spark-screen">
@@ -69,10 +70,27 @@
                                 <div class="col-sm-1"><h4 class="panel-title">{{ $trade->volume }}</h4></div>
                                 <div class="col-sm-2"><h4 class="panel-title">{{ $trade->resultado }}</h4></div>
                                 <div class="col-sm-2 text-center"><h4 class="panel-title">R$ {{ $trade->lucro_prejuizo }}</h4></div>
-                                <div class="col-sm-2 text-right"><h4 class="panel-title">
-                                        <a href="" title= "Encerrar / Realizar Parcial" id="closeTrade" data-id="{{ $trade->id }}" data-toggle="modal" data-target="#closeTradeFormModal"><i class='fa fa-check fa-3' aria-hidden="true"></i></a>&nbsp;&nbsp;
-                                        <a href="" id="addEntradaTrade" name="addEntradaTrade" data-toggle="modal" data-target="#addEntradaTradeFormModal"><i class="fa fa-plus fa-3" aria-hidden="true"></i></a>&nbsp;&nbsp;
-                                        <a href="{{ url('/trade/apagar/'.$trade->id) }}" id="excluir_trade" title= "Excluir Trade"><i class="fa fa-times fa-3" aria-hidden="true"></i></a></h4>
+                                <div class="col-sm-2 text-right">
+                                    <h4 class="panel-title">
+                                        <a href=""
+                                           title= "Encerrar / Realizar Parcial"
+                                           id="closeTrade"
+                                           data-id="{{ $trade->id }}"
+                                           data-volumeaberto="{{ $trade->volume_aberto }}"
+                                           data-toggle="modal"
+                                           data-target="#closeTradeFormModal">
+                                            <i class='fa fa-check fa-3' aria-hidden="true"></i></a>&nbsp;&nbsp;
+                                        <a href="" id="addEntradaTrade" name="addEntradaTrade" data-toggle="modal"
+                                           data-target="#addEntradaTradeFormModal"
+                                           style="pointer-events: none">
+                                            <i class="fa fa-plus fa-3" aria-hidden="true"></i></a>&nbsp;&nbsp;
+                                        <a href="#"
+                                           data-href="{{ url('/trade/apagar/'.$trade->id) }}" data-toggle="modal" data-target="#confirm-delete"
+                                           id="excluir_trade"
+                                           title= "Excluir Trade">
+                                            <i class="fa fa-times fa-3" aria-hidden="true"></i>
+                                        </a>
+                                    </h4>
                                 </div>
                             </div>
                         </div>
@@ -136,6 +154,12 @@
         $(document).on("click", "#closeTrade", function () {
             var tradeId = $(this).data('id');
             $(".modal-body #tradeId").val( tradeId );
+            $(".modal-body #volume").val( $(this).data('volumeaberto') );
         });
+
+        $('#confirm-delete').on('show.bs.modal', function(e) {
+            $(this).find('.btn-ok').attr('href', $(e.relatedTarget).data('href'));
+        });
+
     </script>
 @endsection
