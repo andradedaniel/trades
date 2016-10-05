@@ -141,9 +141,20 @@ class TradeController extends Controller
 //            $tradeAberto->volume_aberto -= $tradeOperacao->volume;
 //        }
 
-        $tradeAberto->resultado = ($tradeAberto->preco_medio - $tradeOperacao->preco) * $invertForBuy;
-        $tradeAberto->lucro_prejuizo += $tradeOperacao->lucro_prejuizo;
+        $volFechadoAntes = $tradeAberto->volume - $tradeAberto->volume_aberto;
         $tradeAberto->volume_aberto -= $tradeOperacao->volume;
+        $volFechadoFinal = $tradeAberto->volume - $tradeAberto->volume_aberto;
+
+        $tradeAberto->resultado = (($tradeAberto->resultado * $volFechadoAntes)
+                                    + (($tradeOperacao->preco - $tradeAberto->preco_medio) * $tradeOperacao->volume)
+                                    / ($volFechadoFinal)) ;
+        $xx = $tradeAberto->resultado * $invertForBuy;
+//        dd('result='.$tradeAberto->resultado.' <> invert='.$xx);
+
+
+
+        $tradeAberto->lucro_prejuizo += $tradeOperacao->lucro_prejuizo;
+
         if ($tradeAberto->volume_aberto == 0)
             $tradeAberto->trade_aberto = 'false';
 
