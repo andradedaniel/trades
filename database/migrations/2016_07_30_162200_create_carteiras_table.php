@@ -12,14 +12,14 @@ class CreateCarteirasTable extends Migration
      */
     public function up()
     {
-        Schema::create('carteiras', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->string('nome');
-            $table->timestamps();
-            $table->softDeletes();
-        });
+//        Schema::create('carteiras', function (Blueprint $table) {
+//            $table->increments('id');
+//            $table->integer('user_id')->unsigned();
+//            $table->foreign('user_id')->references('id')->on('users');
+//            $table->string('nome');
+//            $table->timestamps();
+//            $table->softDeletes();
+//        });
     }
 
     /**
@@ -29,6 +29,6 @@ class CreateCarteirasTable extends Migration
      */
     public function down()
     {
-        Schema::drop('carteiras');
+//        Schema::drop('carteiras');
     }
 }

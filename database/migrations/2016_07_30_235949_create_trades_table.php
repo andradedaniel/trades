@@ -14,15 +14,20 @@ class CreateTradesTable extends Migration
     {
         Schema::create('trades', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->integer('ativo_id')->unsigned();
             $table->foreign('ativo_id')->references('id')->on('ativos');
             $table->date('data');
             $table->enum('tipo', ['buy', 'sell']);
-            $table->float('preco_entrada');
-            $table->float('preco_saida')->nullable();
-            $table->integer('volume')->unsigned();
+            $table->float('preco_medio');
             $table->float('resultado')->nullable();
-            $table->decimal('lucro_prejuizo',5,2)->nullable();
+            $table->float('lucro_prejuizo_bruto')->nullable();
+            $table->float('lucro_prejuizo_liquido')->nullable();
+            $table->float('total_taxas');
+            $table->integer('volume')->nullable()->unsigned();
+            $table->integer('volume_aberto')->nullable()->unsigned();
+            $table->boolean('trade_aberto')->default(true);
             $table->timestamps();
         });
     }

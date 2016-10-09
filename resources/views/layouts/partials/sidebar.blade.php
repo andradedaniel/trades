@@ -33,21 +33,23 @@
         <ul class="sidebar-menu">
             <li class="header">{{ trans('message.leftMenuHeader') }}</li>
             <!-- Optionally, you can add icons to the links -->
-            <li class="active"><a href="{{ url('/') }}"><i class='fa fa-link'></i> <span>{{ trans('adminlte_lang::message.home') }}</span></a></li>
-            @foreach($carteiras as $carteira)
+            <li class="active"><a href="{{ url('/') }}"><i class='fa fa-home'></i> <span>{{ trans('adminlte_lang::message.home') }}</span></a></li>
+            <li><a href="{{ url('/trades') }}"><i class='fa fa-usd'></i> <span>{{ 'WINQ16' }}</span></a></li>
+
+            {{--@foreach($carteiras as $carteira)--}}
                 {{--<li><a href="#"><i class='fa fa-link'></i> <span>{{ $carteira->nome }}</span></a></li>--}}
-                <li class="treeview">
-                    <a href="{{ url('/carteira/'.$carteira->id) }}"><i class='fa fa-link'></i> <span>{{ $carteira->nome }}</span> <i class="fa fa-angle-left pull-right"></i></a>
-                    <ul class="treeview-menu">
-                        @if ($carteira->ativos->isEmpty())
-                            <li><a href="#">{{ 'Nenhum ativo cadastrado.' }}</a></li>
-                        @endif
-                    @foreach($carteira->ativos as $ativo)
-                        <li><a href="{{ url('/ativo/'.$ativo->id) }}">{{ $ativo->codigo }}</a></li>
-                    @endforeach
-                    </ul>
-                </li>
-            @endforeach
+                {{--<li class="treeview">--}}
+                    {{--<a href="{{ url('/carteira/'.$carteira->id) }}"><i class='fa fa-link'></i> <span>{{ $carteira->nome }}</span> <i class="fa fa-angle-left pull-right"></i></a>--}}
+                    {{--<ul class="treeview-menu">--}}
+                        {{--@if ($carteira->ativos->isEmpty())--}}
+                            {{--<li><a href="#">{{ 'Nenhum ativo cadastrado.' }}</a></li>--}}
+                        {{--@endif--}}
+                    {{--@foreach($carteira->ativos as $ativo)--}}
+                        {{--<li><a href="{{ url('/ativo/'.$ativo->id) }}">{{ $ativo->codigo }}</a></li>--}}
+                    {{--@endforeach--}}
+                    {{--</ul>--}}
+                {{--</li>--}}
+            {{--@endforeach--}}
         </ul><!-- /.sidebar-menu -->
     </section>
     <!-- /.sidebar -->

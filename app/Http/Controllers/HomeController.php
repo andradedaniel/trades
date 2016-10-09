@@ -48,6 +48,7 @@ class HomeController extends Controller
 ////
 //        }
 //        die;
-        return view('home',['carteiras' => Auth::user()->carteiras]);
+//        return view('home',['carteiras' => Auth::user()->carteiras]);
+        return view('home');
     }
 }

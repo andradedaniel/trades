@@ -24,8 +24,13 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
-    public function carteiras()
+//    public function carteiras()
+//    {
+//        return $this->hasMany('App\Carteira');
+//    }
+
+    public function trades()
     {
-        return $this->hasMany('App\Carteira');
+        return $this->hasMany('App\Trade');
     }
 }
