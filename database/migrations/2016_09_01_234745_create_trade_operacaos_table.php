@@ -19,9 +19,11 @@ class CreateTradeOperacaosTable extends Migration
             $table->enum('tipo', ['buy', 'sell']);
             $table->enum('in_or_out', ['in', 'out']);
             $table->float('preco');
-            $table->integer('volume');//->unsigned();
+            $table->integer('volume')->unsigned();
             $table->float('resultado')->nullable();
-            $table->float('lucro_prejuizo')->nullable();
+            $table->float('lucro_prejuizo_bruto')->nullable();
+            $table->float('lucro_prejuizo_liquido')->nullable();
+            $table->float('taxas');
             $table->timestamps();
         });
     }

@@ -12,10 +12,10 @@
 */
 
 Route::auth();
-Auth::loginUsingId(1, true);
+//Auth::loginUsingId(1, true);
 
 Route::get('/', 'HomeController@index');
-Route::get('/trades', 'TradeController@index')->name('trades.index');
+Route::get('/trades/{ativoId?}', 'TradeController@index')->name('trades.index');
 Route::post('/trades', 'TradeController@store');
 //TODO: renomear para excluir ao inves de apagar
 Route::get('/trade/apagar/{idTrade}', 'TradeController@destroy');

@@ -41,6 +41,8 @@ $factory->define(App\Ativo::class, function (Faker\Generator $faker) {
 //        'carteira_id' => $carteira_id,
         'codigo' => $faker->randomElement($codigo_array),
         'descricao' => $faker->sentence(2,false),
+        'taxas' => 1,
+        'tx_contrato_ou_ordem' => 'contrato',
     ];
 });
 

@@ -18,6 +18,9 @@ class CreateAtivosTable extends Migration
             //$table->foreign('carteira_id')->references('id')->on('carteiras');
             $table->char('codigo',6);
             $table->string('descricao')->nullable();
+            $table->float('taxas');
+            $table->enum('tx_contrato_ou_ordem', ['contrato', 'ordem'])->nullable();
+
             $table->timestamps();
 //            $table->unique(['codigo','carteira_id']);
         });
