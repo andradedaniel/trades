@@ -36,14 +36,13 @@ class HomeController extends Controller
      */
     public function index()
     {
-//        $trades = Trade::count()->where('user_id','=',Auth::user()->id);
-        $totalTrades = Auth::user()->trades()->count();
+        //TODO: buscar apenas trades fechados
+//        $totalTrades = Auth::user()->trades()->count();
         $totalTradesPositivos = Auth::user()->trades()->where('lucro_prejuizo_bruto', '>',0)->count();
         $totalTradesNegativos = Auth::user()->trades()->where('lucro_prejuizo_bruto', '<',0)->count();
-//        dd($totalTradesNegativos);
 //
         return view('home')
-                ->with('totalTrades',json_encode($totalTrades,JSON_NUMERIC_CHECK))
+//                ->with('totalTrades',json_encode($totalTrades,JSON_NUMERIC_CHECK))
                 ->with('totalTradesPositivos',json_encode($totalTradesPositivos,JSON_NUMERIC_CHECK))
                 ->with('totalTradesNegativos',json_encode($totalTradesNegativos,JSON_NUMERIC_CHECK));
     }
