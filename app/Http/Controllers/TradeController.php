@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Ativo;
+use Carbon\Carbon;
 use Gate;
 use App\Http\Requests;
 use App\Trade;
@@ -14,8 +15,15 @@ class TradeController extends Controller
 {
     public function index($ativoId=1)
     {
-//        $ativoId = 1;
-        $trades = Auth::user()->trades()->where('ativo_id','=',$ativoId)->orderBy('updated_at', 'DESC')->get();
+        $mes = (isset($_GET['mes']) ? $_GET['mes'] : Carbon::now()->month);
+        $ano = (isset($_GET['ano']) ? $_GET['ano'] : Carbon::now()->year);
+
+        $trades = Auth::user()->trades()
+                                ->where('ativo_id','=',$ativoId)
+                                ->whereMonth('data', '=', $mes)
+                                ->whereYear('data', '=', $ano)
+                                ->orderBy('updated_at', 'DESC')
+                                ->get();
         return view('trades.index',['trades' => $trades, 'ativoId'=>$ativoId]);
     }
 
@@ -200,5 +208,4 @@ class TradeController extends Controller
 
         return redirect()->route('trades.index');
     }
-
 }

@@ -8,6 +8,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use App\Trade;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -35,20 +36,15 @@ class HomeController extends Controller
      */
     public function index()
     {
-//        $a = Auth::user()->carteiras;
-//        foreach ($a as $x){
-//                print_r($x->nome);
-//                //print_r($x->ativos);
-//            if ($x->ativos->isEmpty())
-//                echo 'karaiii';
-//                //$x->ativos = array('nome'=>'kkkkkk');
-////            echo $x->nome;
-////            foreach ($x->ativos as $ativo) {
-////                var_dump($x->nome);
-////
-//        }
-//        die;
-//        return view('home',['carteiras' => Auth::user()->carteiras]);
-        return view('home');
+//        $trades = Trade::count()->where('user_id','=',Auth::user()->id);
+        $totalTrades = Auth::user()->trades()->count();
+        $totalTradesPositivos = Auth::user()->trades()->where('lucro_prejuizo_bruto', '>',0)->count();
+        $totalTradesNegativos = Auth::user()->trades()->where('lucro_prejuizo_bruto', '<',0)->count();
+//        dd($totalTradesNegativos);
+//
+        return view('home')
+                ->with('totalTrades',json_encode($totalTrades,JSON_NUMERIC_CHECK))
+                ->with('totalTradesPositivos',json_encode($totalTradesPositivos,JSON_NUMERIC_CHECK))
+                ->with('totalTradesNegativos',json_encode($totalTradesNegativos,JSON_NUMERIC_CHECK));
     }
 }

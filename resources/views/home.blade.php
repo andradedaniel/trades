@@ -9,7 +9,6 @@
 
 
 @section('main-content')
-
 	<div id="container"></div>
 	<div class="container spark-screen">
 		<div class="row">
@@ -63,7 +62,11 @@
 	</div>
 
 	<script>
+
 		$(function () {
+			var totalTradesPositivos = <?php echo $totalTradesPositivos; ?>;
+			var totalTradesNegativos = <?php echo $totalTradesNegativos; ?>;
+
 			$('#container').highcharts({
 				chart: {
 					plotBackgroundColor: 'rgba(255,255,255,0.002)'	,
@@ -72,10 +75,10 @@
 					type: 'pie'
 				},
 				title: {
-					text: 'Browser market shares January, 2015 to May, 2015'
+					text: 'Trades Positivos x Negativos'
 				},
 				tooltip: {
-					pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+					pointFormat: '<b>{point.percentage:.1f}%</b><br>Qtd: {point.y} <br>Total: {point.total}'
 				},
 				plotOptions: {
 					pie: {
@@ -83,7 +86,7 @@
 						cursor: 'pointer',
 						dataLabels: {
 							enabled: true,
-							format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+							format: '<b>{point.name}</b>: {point.percentage:.1f}%',
 							style: {
 								color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
 							}
@@ -91,28 +94,20 @@
 					}
 				},
 				series: [{
-					name: 'Brands',
 					colorByPoint: true,
+//					colors: ['blue', 'red'],
+					colors: ['#91e8e1','#f45b5b'],
 					data: [{
-						name: 'Microsoft Internet Explorer',
-						y: 56.33
+						name: 'Positivos',
+						y: totalTradesPositivos,
+//						selected: true
+
 					}, {
-						name: 'Chrome',
-						y: 24.03,
-						sliced: true,
+						name: 'Negativos',
+						y: totalTradesNegativos,
+//						sliced: true,
 						selected: true
-					}, {
-						name: 'Firefox',
-						y: 10.38
-					}, {
-						name: 'Safari',
-						y: 4.77
-					}, {
-						name: 'Opera',
-						y: 0.91
-					}, {
-						name: 'Proprietary or Undetectable',
-						y: 0.2
+
 					}]
 				}]
 			});
