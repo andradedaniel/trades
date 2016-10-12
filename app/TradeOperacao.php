@@ -11,8 +11,8 @@ class TradeOperacao extends Model
         return $this->belongsTo('App\Trade');
     }
 
-    public function calculaPrecoMedio($preco)
-    {
-
-    }
+//    public function calculaPrecoMedio($preco)
+//    {
+//
+//    }
 }

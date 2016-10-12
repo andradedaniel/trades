@@ -40,10 +40,29 @@ class HomeController extends Controller
 //        $totalTrades = Auth::user()->trades()->count();
         $totalTradesPositivos = Auth::user()->trades()->where('lucro_prejuizo_bruto', '>',0)->count();
         $totalTradesNegativos = Auth::user()->trades()->where('lucro_prejuizo_bruto', '<',0)->count();
-//
+
+        //total de trades na venda + % de acerto
+        $totalTradesVenda = [];
+        $totalTradesVenda['total'] = Auth::user()->trades()->where('tipo', '=','sell')->count();
+        $totalTradesVenda['totalComLucro'] = Auth::user()->trades()->where('tipo', '=','sell')
+                                                                    ->where('lucro_prejuizo_bruto', '>',0)
+                                                                    ->count();
+        //total de trades na compra + % de acerto
+        //total de pontos positivo
+        //total de pontos negativo
+        //trade com maior prejuizo
+        //trade com maior lucro
+        //media de L/P no periodo
+        //L/P liquido no periodo avaliado
+
+
+
+
+
         return view('home')
 //                ->with('totalTrades',json_encode($totalTrades,JSON_NUMERIC_CHECK))
                 ->with('totalTradesPositivos',json_encode($totalTradesPositivos,JSON_NUMERIC_CHECK))
-                ->with('totalTradesNegativos',json_encode($totalTradesNegativos,JSON_NUMERIC_CHECK));
+                ->with('totalTradesNegativos',json_encode($totalTradesNegativos,JSON_NUMERIC_CHECK))
+                ->with('totalTradesVenda',$totalTradesVenda);
     }
 }

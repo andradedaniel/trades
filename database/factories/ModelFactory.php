@@ -39,6 +39,7 @@ $factory->define(App\Ativo::class, function (Faker\Generator $faker) {
 //                        'BRML3','BVMF3','CCRO3','CESP6','CIEL3','CMIG4','CPFE3','CPLE6','CSAN3');
     return [
 //        'carteira_id' => $carteira_id,
+        'user_id' => 1,
         'codigo' => $faker->randomElement($codigo_array),
         'descricao' => $faker->sentence(2,false),
         'taxas' => 1,

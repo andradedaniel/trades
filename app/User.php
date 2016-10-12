@@ -33,4 +33,9 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Trade');
     }
+
+    public function ativos()
+    {
+        return $this->hasMany('App\Ativo');
+    }
 }

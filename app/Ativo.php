@@ -10,4 +10,9 @@ class Ativo extends Model
 //    {
 //        return $this->belongsTo('App\Carteira');
 //    }
+//
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
 }

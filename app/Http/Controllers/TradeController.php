@@ -24,6 +24,7 @@ class TradeController extends Controller
                                 ->whereYear('data', '=', $ano)
                                 ->orderBy('updated_at', 'DESC')
                                 ->get();
+
         return view('trades.index',['trades' => $trades, 'ativoId'=>$ativoId]);
     }
 
@@ -36,13 +37,8 @@ class TradeController extends Controller
             'tipo' => 'required',
             'volume' => 'required',
         ]);
-        $ativo = Ativo::findOrFail($request->ativo_id);
-        if ($ativo->tx_contrato_ou_ordem == 'contrato'){
-            $totalTaxasOperacao = $ativo->taxas * $request->volume;
-        }
-        else {
-            $totalTaxasOperacao = $ativo->taxas ;
-        }
+
+        $totalTaxasOperacao = $this->calculaTotalTaxasOperacao($request->ativo_id, $request->volume);
 
         //TODO: colocar try/catch
         //TODO: verificar se retornou mais de um trade aberto. Pois nao deve ser possivel $var->count()
@@ -123,20 +119,37 @@ class TradeController extends Controller
 
     }
 
+    private function calculaTotalTaxasOperacao($idAtivo,$operacaoVolume)
+    {
+        //TODO: buscar pelo ativo filtrando somente pelos ativos do usuario logado
+        $ativo = Ativo::findOrFail($idAtivo);
+        if ($ativo->tx_contrato_ou_ordem == 'contrato'){
+            $totalTaxasOperacao = $ativo->taxas * $operacaoVolume;
+        }
+        else {
+            $totalTaxasOperacao = $ativo->taxas ;
+        }
+
+        return $totalTaxasOperacao;
+    }
+
     public function encerrarTrade(Request $request)
     {
         //TODO: desabilitar botar de encerrar caso o trade_aberto = false
         //TODO: verificar o q fazer com return
         //TODO: verificar se o volume informado eh maior do q o volume em aberto
-
         $trade = Trade::findOrFail($request->id);
 
-
+        $totalTaxasOperacao = $this->calculaTotalTaxasOperacao($trade->ativo_id,$request->volume);
 
         $tradeOperacao = new TradeOperacao();
         $tradeOperacao->tipo = ($trade->tipo=='buy' ? 'sell' : 'buy');
         $tradeOperacao->volume = $request->volume;
         $tradeOperacao->preco = $request->preco;
+        $tradeOperacao->taxas = $totalTaxasOperacao;
+        $tradeOperacao->lucro_prejuizo_liquido -= $totalTaxasOperacao;
+        $trade->total_taxas += $totalTaxasOperacao;
+        $trade->lucro_prejuizo_liquido -= $totalTaxasOperacao;
         //TODO: usar try/catch
         if ($this->encerrarTrade2($trade,$tradeOperacao))
         {
@@ -157,7 +170,7 @@ class TradeController extends Controller
         if ($tradeOperacao->volume > $tradeAberto->volume_aberto){
             return redirect()->route('trades.index')->withInput()-> withErrors(['Ops! Informe um volume menor ou igual ao volume em aberto. :(']);
         }
-        $invertForBuy = ($tradeAberto->tipo=='buy' ? -1 : 1);
+        $invertForBuy = ($tradeAberto->tipo=='buy' ? -1 : 1); //necessario para calculo correto quando o trade eh de compra
         $tradeOperacao->in_or_out = 'out';
         $tradeOperacao->resultado = ($tradeAberto->preco_medio - $tradeOperacao->preco) * $invertForBuy;
         $tradeOperacao->lucro_prejuizo_bruto = $tradeOperacao->resultado * $tradeOperacao->volume * 0.2;
@@ -167,9 +180,9 @@ class TradeController extends Controller
         $tradeAberto->volume_aberto -= $tradeOperacao->volume;
         $volFechadoFinal = $tradeAberto->volume - $tradeAberto->volume_aberto;
 
-        $tradeAberto->resultado = (($tradeAberto->resultado * $volFechadoAntes)
-                                    + (($tradeOperacao->preco - $tradeAberto->preco_medio) * $tradeOperacao->volume))
-                                    / $volFechadoFinal ;
+        $tradeAberto->resultado = ((($tradeAberto->resultado * $volFechadoAntes)
+                                    + (( $tradeAberto->preco_medio - $tradeOperacao->preco) * $tradeOperacao->volume))
+                                    / $volFechadoFinal) * $invertForBuy;
 
         $tradeAberto->lucro_prejuizo_bruto += $tradeOperacao->lucro_prejuizo_bruto;
         $tradeAberto->lucro_prejuizo_liquido += $tradeOperacao->lucro_prejuizo_bruto;
