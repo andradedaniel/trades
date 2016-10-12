@@ -50,7 +50,7 @@ class HomeController extends Controller
 
         // lucro liquido por mes
         $ano=2016;
-        $lucro_ano_temp = Trade::select(\DB::raw("SUM(lucro_prejuizo_liquido) as total_lucro, month(data) as mes"))
+        $lucro_ano_temp = Auth::user()->trades()->select(\DB::raw("SUM(lucro_prejuizo_liquido) as total_lucro, month(data) as mes"))
                 ->where(\DB::raw("year(data)"),'=',$ano)
                 ->groupBy(\DB::raw("month(data)"))
                 ->get()->toArray();
