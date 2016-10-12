@@ -79,27 +79,27 @@ $factory->define(App\Trade::class, function (Faker\Generator $faker) {
 });
 
 
-$factory->define(App\TradeEntrada::class, function (Faker\Generator $faker) {
-    $trade_ids = DB::table('trades')->select('id')->get();
-    $trade_id = $faker->randomElement($trade_ids)->id;
-    $preco = $faker->numberBetween(50000,57000);
-
-    return [
-        'trade_id' => $trade_id,
-        'preco' => $preco,
-        'volume' => $faker->numberBetween(1,20),
-    ];
-});
-
-
-$factory->define(App\TradeSaida::class, function (Faker\Generator $faker) {
-    $trade_ids = DB::table('trades')->select('id')->get();
-    $trade_id = $faker->randomElement($trade_ids)->id;
-    $preco = $faker->numberBetween(50000,57000);
-
-    return [
-        'trade_id' => $trade_id,
-        'preco' => $preco,
-        'volume' => $faker->numberBetween(1,20),
-    ];
-});
+//$factory->define(App\TradeEntrada::class, function (Faker\Generator $faker) {
+//    $trade_ids = DB::table('trades')->select('id')->get();
+//    $trade_id = $faker->randomElement($trade_ids)->id;
+//    $preco = $faker->numberBetween(50000,57000);
+//
+//    return [
+//        'trade_id' => $trade_id,
+//        'preco' => $preco,
+//        'volume' => $faker->numberBetween(1,20),
+//    ];
+//});
+//
+//
+//$factory->define(App\TradeSaida::class, function (Faker\Generator $faker) {
+//    $trade_ids = DB::table('trades')->select('id')->get();
+//    $trade_id = $faker->randomElement($trade_ids)->id;
+//    $preco = $faker->numberBetween(50000,57000);
+//
+//    return [
+//        'trade_id' => $trade_id,
+//        'preco' => $preco,
+//        'volume' => $faker->numberBetween(1,20),
+//    ];
+//});

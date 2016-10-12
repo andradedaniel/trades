@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use Gate;
 use App\Http\Requests;
 use App\Trade;
-use App\TradeOperacao;
+use App\TradeOrdem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -38,7 +38,7 @@ class TradeController extends Controller
             'volume' => 'required',
         ]);
 
-        $totalTaxasOperacao = $this->calculaTotalTaxasOperacao($request->ativo_id, $request->volume);
+        $totalTaxasOrdem = $this->calculaTotalTaxasOrdem($request->ativo_id, $request->volume);
 
         //TODO: colocar try/catch
         //TODO: verificar se retornou mais de um trade aberto. Pois nao deve ser possivel $var->count()
@@ -50,32 +50,32 @@ class TradeController extends Controller
         $tradeAberto = Auth::user()->trades()->where('trade_aberto','=',1)->where('ativo_id','=',$request->ativo_id)->first();
         if ($tradeAberto)
         {
-            $tradeOperacao = new TradeOperacao();
-            $tradeOperacao->tipo = $request->tipo;
-            $tradeOperacao->volume = $request->volume;
-            $tradeOperacao->preco = $request->preco;
-            $tradeOperacao->taxas = $totalTaxasOperacao;
-            $tradeOperacao->lucro_prejuizo_liquido -= $totalTaxasOperacao;
-            $tradeAberto->total_taxas += $totalTaxasOperacao;
-            $tradeAberto->lucro_prejuizo_liquido -= $totalTaxasOperacao;
+            $tradeOrdem = new TradeOrdem();
+            $tradeOrdem->tipo = $request->tipo;
+            $tradeOrdem->volume = $request->volume;
+            $tradeOrdem->preco = $request->preco;
+            $tradeOrdem->taxas = $totalTaxasOrdem;
+            $tradeOrdem->lucro_prejuizo_liquido -= $totalTaxasOrdem;
+            $tradeAberto->total_taxas += $totalTaxasOrdem;
+            $tradeAberto->lucro_prejuizo_liquido -= $totalTaxasOrdem;
             if ($tradeAberto->tipo != $request->tipo) //se eh diferente, eh pq ta fechando o trade
             {
-                $this->encerrarTrade2($tradeAberto,$tradeOperacao);
+                $this->encerrarTrade2($tradeAberto,$tradeOrdem);
             }
             else //se nao, esta aumentao a mao no trade
             {
-                $PMAntigo = ($tradeAberto->preco_medio * $tradeAberto->volume) + ($tradeOperacao->preco * $tradeOperacao->volume);
+                $PMAntigo = ($tradeAberto->preco_medio * $tradeAberto->volume) + ($tradeOrdem->preco * $tradeOrdem->volume);
 
-                $tradeOperacao->in_or_out = 'in';
-                $tradeOperacao->taxas = $totalTaxasOperacao;
-                $tradeAberto->volume += $tradeOperacao->volume;
-                $tradeAberto->volume_aberto += $tradeOperacao->volume;
+                $tradeOrdem->in_or_out = 'in';
+                $tradeOrdem->taxas = $totalTaxasOrdem;
+                $tradeAberto->volume += $tradeOrdem->volume;
+                $tradeAberto->volume_aberto += $tradeOrdem->volume;
                 $tradeAberto->preco_medio =  $PMAntigo / $tradeAberto->volume;
 
                 try {
-                    \DB::transaction(function () use ($tradeAberto, $tradeOperacao) {
+                    \DB::transaction(function () use ($tradeAberto, $tradeOrdem) {
                         $tradeAberto->save();
-                        $tradeAberto->tradeOperacao()->save($tradeOperacao);
+                        $tradeAberto->tradeOrdem()->save($tradeOrdem);
                     });
 
                 } catch (Exception $e) {
@@ -93,24 +93,24 @@ class TradeController extends Controller
             $trade->preco_medio = $request->preco;
             $trade->volume = $request->volume;
             $trade->volume_aberto = $request->volume;
-            $trade->total_taxas = $totalTaxasOperacao;
-//            $trade->lucro_prejuizo_bruto -= $totalTaxasOperacao;
-            $trade->lucro_prejuizo_liquido -= $totalTaxasOperacao;
+            $trade->total_taxas = $totalTaxasOrdem;
+//            $trade->lucro_prejuizo_bruto -= $totalTaxasOrdem;
+            $trade->lucro_prejuizo_liquido -= $totalTaxasOrdem;
 
-            $tradeOperacao = new TradeOperacao();
-            $tradeOperacao->tipo = $request->tipo;
-            $tradeOperacao->in_or_out = 'in';
-            $tradeOperacao->preco = $request->preco;
-            $tradeOperacao->volume = $request->volume;
-            $tradeOperacao->taxas = $totalTaxasOperacao;
-//            $tradeOperacao->lucro_prejuizo_bruto -= $totalTaxasOperacao;
-            $tradeOperacao->lucro_prejuizo_liquido -= $totalTaxasOperacao;
+            $tradeOrdem = new TradeOrdem();
+            $tradeOrdem->tipo = $request->tipo;
+            $tradeOrdem->in_or_out = 'in';
+            $tradeOrdem->preco = $request->preco;
+            $tradeOrdem->volume = $request->volume;
+            $tradeOrdem->taxas = $totalTaxasOrdem;
+//            $tradeOrdem->lucro_prejuizo_bruto -= $totalTaxasOrdem;
+            $tradeOrdem->lucro_prejuizo_liquido -= $totalTaxasOrdem;
 
 
 
-            \DB::transaction(function () use ($trade,$tradeOperacao) {
+            \DB::transaction(function () use ($trade,$tradeOrdem) {
                 $trade = Auth::user()->trades()->save($trade);
-                $trade->tradeOperacao()->save($tradeOperacao);
+                $trade->tradeOrdem()->save($tradeOrdem);
             });
 
         }
@@ -119,18 +119,18 @@ class TradeController extends Controller
 
     }
 
-    private function calculaTotalTaxasOperacao($idAtivo,$operacaoVolume)
+    private function calculaTotalTaxasOrdem($idAtivo,$ordemVolume)
     {
         //TODO: buscar pelo ativo filtrando somente pelos ativos do usuario logado
         $ativo = Ativo::findOrFail($idAtivo);
         if ($ativo->tx_contrato_ou_ordem == 'contrato'){
-            $totalTaxasOperacao = $ativo->taxas * $operacaoVolume;
+            $totalTaxasOrdem = $ativo->taxas * $ordemVolume;
         }
         else {
-            $totalTaxasOperacao = $ativo->taxas ;
+            $totalTaxasOrdem = $ativo->taxas ;
         }
 
-        return $totalTaxasOperacao;
+        return $totalTaxasOrdem;
     }
 
     public function encerrarTrade(Request $request)
@@ -140,25 +140,25 @@ class TradeController extends Controller
         //TODO: verificar se o volume informado eh maior do q o volume em aberto
         $trade = Trade::findOrFail($request->id);
 
-        $totalTaxasOperacao = $this->calculaTotalTaxasOperacao($trade->ativo_id,$request->volume);
+        $totalTaxasOrdem = $this->calculaTotalTaxasOrdem($trade->ativo_id,$request->volume);
 
-        $tradeOperacao = new TradeOperacao();
-        $tradeOperacao->tipo = ($trade->tipo=='buy' ? 'sell' : 'buy');
-        $tradeOperacao->volume = $request->volume;
-        $tradeOperacao->preco = $request->preco;
-        $tradeOperacao->taxas = $totalTaxasOperacao;
-        $tradeOperacao->lucro_prejuizo_liquido -= $totalTaxasOperacao;
-        $trade->total_taxas += $totalTaxasOperacao;
-        $trade->lucro_prejuizo_liquido -= $totalTaxasOperacao;
+        $tradeOrdem = new TradeOrdem();
+        $tradeOrdem->tipo = ($trade->tipo=='buy' ? 'sell' : 'buy');
+        $tradeOrdem->volume = $request->volume;
+        $tradeOrdem->preco = $request->preco;
+        $tradeOrdem->taxas = $totalTaxasOrdem;
+        $tradeOrdem->lucro_prejuizo_liquido -= $totalTaxasOrdem;
+        $trade->total_taxas += $totalTaxasOrdem;
+        $trade->lucro_prejuizo_liquido -= $totalTaxasOrdem;
         //TODO: usar try/catch
-        if ($this->encerrarTrade2($trade,$tradeOperacao))
+        if ($this->encerrarTrade2($trade,$tradeOrdem))
         {
             return redirect()->route('trades.index');
         }
         return false;
     }
 
-    private function encerrarTrade2($tradeAberto, $tradeOperacao)
+    private function encerrarTrade2($tradeAberto, $tradeOrdem)
     {
         //Verifica se o usuario logado tem permissao para atualizar o trade
         if (Gate::denies('update-delete-trade', $tradeAberto)) {
@@ -167,33 +167,33 @@ class TradeController extends Controller
         if ( ! $tradeAberto->trade_aberto) {
             return redirect()->route('trades.index')->withErrors(['Ops! Este trade ja esta encerrado. :(']);
         }
-        if ($tradeOperacao->volume > $tradeAberto->volume_aberto){
+        if ($tradeOrdem->volume > $tradeAberto->volume_aberto){
             return redirect()->route('trades.index')->withInput()-> withErrors(['Ops! Informe um volume menor ou igual ao volume em aberto. :(']);
         }
         $invertForBuy = ($tradeAberto->tipo=='buy' ? -1 : 1); //necessario para calculo correto quando o trade eh de compra
-        $tradeOperacao->in_or_out = 'out';
-        $tradeOperacao->resultado = ($tradeAberto->preco_medio - $tradeOperacao->preco) * $invertForBuy;
-        $tradeOperacao->lucro_prejuizo_bruto = $tradeOperacao->resultado * $tradeOperacao->volume * 0.2;
-        $tradeOperacao->lucro_prejuizo_liquido += $tradeOperacao->lucro_prejuizo_bruto;
+        $tradeOrdem->in_or_out = 'out';
+        $tradeOrdem->resultado = ($tradeAberto->preco_medio - $tradeOrdem->preco) * $invertForBuy;
+        $tradeOrdem->lucro_prejuizo_bruto = $tradeOrdem->resultado * $tradeOrdem->volume * 0.2;
+        $tradeOrdem->lucro_prejuizo_liquido += $tradeOrdem->lucro_prejuizo_bruto;
 
         $volFechadoAntes = $tradeAberto->volume - $tradeAberto->volume_aberto;
-        $tradeAberto->volume_aberto -= $tradeOperacao->volume;
+        $tradeAberto->volume_aberto -= $tradeOrdem->volume;
         $volFechadoFinal = $tradeAberto->volume - $tradeAberto->volume_aberto;
 
         $tradeAberto->resultado = ((($tradeAberto->resultado * $volFechadoAntes)
-                                    + (( $tradeAberto->preco_medio - $tradeOperacao->preco) * $tradeOperacao->volume))
+                                    + (( $tradeAberto->preco_medio - $tradeOrdem->preco) * $tradeOrdem->volume))
                                     / $volFechadoFinal) * $invertForBuy;
 
-        $tradeAberto->lucro_prejuizo_bruto += $tradeOperacao->lucro_prejuizo_bruto;
-        $tradeAberto->lucro_prejuizo_liquido += $tradeOperacao->lucro_prejuizo_bruto;
+        $tradeAberto->lucro_prejuizo_bruto += $tradeOrdem->lucro_prejuizo_bruto;
+        $tradeAberto->lucro_prejuizo_liquido += $tradeOrdem->lucro_prejuizo_bruto;
 
         if ($tradeAberto->volume_aberto == 0)
             $tradeAberto->trade_aberto = 'false';
 
         try {
-            \DB::transaction(function () use ($tradeAberto, $tradeOperacao) {
+            \DB::transaction(function () use ($tradeAberto, $tradeOrdem) {
                 $tradeAberto->save();
-                $tradeAberto->tradeOperacao()->save($tradeOperacao);
+                $tradeAberto->tradeOrdem()->save($tradeOrdem);
             });
             return true;
         } catch (Exception $e) {
@@ -215,7 +215,7 @@ class TradeController extends Controller
         //TODO: mostrar msg de confirmação antes de apagar:
         // http://stackoverflow.com/questions/8982295/confirm-delete-modal-dialog-with-twitter-bootstrap
         \DB::transaction(function () use ($idTrade) {
-            TradeOperacao::where('trade_id',$idTrade)->delete();
+            TradeOrdem::where('trade_id',$idTrade)->delete();
             Trade::destroy($idTrade);
         });
 
