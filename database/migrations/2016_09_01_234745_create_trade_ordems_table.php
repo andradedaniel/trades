@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTradeOperacaosTable extends Migration
+class CreateTradeOrdemsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,7 +12,7 @@ class CreateTradeOperacaosTable extends Migration
      */
     public function up()
     {
-        Schema::create('trade_operacaos', function (Blueprint $table) {
+        Schema::create('trade_ordems', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('trade_id')->unsigned();
             $table->foreign('trade_id')->references('id')->on('trades');
@@ -35,6 +35,6 @@ class CreateTradeOperacaosTable extends Migration
      */
     public function down()
     {
-        Schema::drop('trade_operacaos');
+        Schema::drop('trade_ordems');
     }
 }

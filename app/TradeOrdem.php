@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TradeOperacao extends Model
+class TradeOrdem extends Model
 {
     public function trade()
     {

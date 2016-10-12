@@ -105,17 +105,17 @@
                                     <table class="table table-hover text-center">
                                         <tbody>
                                         <?php  $count = 1; ?>
-                                        @foreach($trade->tradeOperacao as $operacao)
+                                        @foreach($trade->tradeOrdem as $ordem)
                                             <tr>
                                                 <td>{{ $count }}</td>
-                                                <td style="color:{{ $operacao->tipo == 'buy' ? 'blue' : 'red' }}">{{ $operacao->tipo.', '.$operacao->in_or_out }}</td>
-                                                <td>{{ $operacao->preco }}</td>
-                                                <td>{{ $operacao->volume }}</td>
-                                                <td>{{ $operacao->resultado or '--' }}</td>
-                                                <td>{{ $operacao->taxas }}</td>
-{{--                                                @if($operacao->in_or_out == 'out')--}}
-                                                    <td><span class="label {{$operacao->lucro_prejuizo_bruto > 0 ? 'label-success' : 'label-danger'}}">{{ number_format($operacao->lucro_prejuizo_bruto, 2, ',', '.') }}</span></td>
-                                                    <td><span class="label {{$operacao->lucro_prejuizo_liquido > 0 ? 'label-success' : 'label-danger'}}">{{ number_format($operacao->lucro_prejuizo_liquido, 2, ',', '.') }}</span></td>
+                                                <td style="color:{{ $ordem->tipo == 'buy' ? 'blue' : 'red' }}">{{ $ordem->tipo.', '.$ordem->in_or_out }}</td>
+                                                <td>{{ $ordem->preco }}</td>
+                                                <td>{{ $ordem->volume }}</td>
+                                                <td>{{ $ordem->resultado or '--' }}</td>
+                                                <td>{{ $ordem->taxas }}</td>
+{{--                                                @if($ordem->in_or_out == 'out')--}}
+                                                    <td><span class="label {{$ordem->lucro_prejuizo_bruto > 0 ? 'label-success' : 'label-danger'}}">{{ number_format($ordem->lucro_prejuizo_bruto, 2, ',', '.') }}</span></td>
+                                                    <td><span class="label {{$ordem->lucro_prejuizo_liquido > 0 ? 'label-success' : 'label-danger'}}">{{ number_format($ordem->lucro_prejuizo_liquido, 2, ',', '.') }}</span></td>
                                                 {{--@else--}}
                                                     <td></td>
                                                     <td></td>
