@@ -1,7 +1,7 @@
 <div class="box">
     <div class="box-body with-border">
         {{--<div class="form-group col-sm-12">--}}
-        <div class="col-sm-12">
+        <div class="col-sm-10">
             {!! Form::open(array('url' => '/trades')) !!}
                 {{Form::hidden('ativo_id',$ativoId)}}
                 <div class="col-sm-2">{{ Form::date('data', \Carbon\Carbon::now(),['class'=>'form-control']) }}</div>
@@ -13,6 +13,9 @@
                 <div class="col-sm-2">{{ Form::text('volume',null,['placeholder'=>'Volume','class'=>'form-control']) }}</div>
                 <div class="col-sm-1 text-right">{{ Form::submit('Salvar',array('class' => 'btn btn-primary')) }}</div>
             {!! Form::close() !!}
+        </div>
+        <div class="col-sm-2">
+            @include('trades.partials.selecionar_mes_ano')
         </div>
     </div>
 </div>

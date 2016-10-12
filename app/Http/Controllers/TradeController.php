@@ -17,7 +17,7 @@ class TradeController extends Controller
     {
         $mes = (isset($_GET['mes']) ? $_GET['mes'] : Carbon::now()->month);
         $ano = (isset($_GET['ano']) ? $_GET['ano'] : Carbon::now()->year);
-
+//dd($mes);
         $trades = Auth::user()->trades()
                                 ->where('ativo_id','=',$ativoId)
                                 ->whereMonth('data', '=', $mes)
@@ -25,7 +25,9 @@ class TradeController extends Controller
                                 ->orderBy('updated_at', 'DESC')
                                 ->get();
 
-        return view('trades.index',['trades' => $trades, 'ativoId'=>$ativoId]);
+//        $mesesToFilter = Trade::where('active', true)->orderBy('name')->pluck('name', 'id');
+
+        return view('trades.index',['trades' => $trades, 'ativoId'=>$ativoId,'mes'=>$mes]);
     }
 
     public function store(Request $request)

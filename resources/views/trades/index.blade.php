@@ -21,7 +21,7 @@
     @include('trades.create')
     @include('trades.close_trade')
     @include('trades.partials.modal_confirm_exluir_trade')
-{{--    @include('trades.partials.selecionar_mes_ano')--}}
+
 
     {{--<button id="adicionarTrade" name="adicionarTrade" class="btn btn-primary" data-toggle="modal" data-target="#addTradeFormModal"><i class='fa fa-plus'></i><span>&nbsp;&nbsp;Adicionar Trade</span></button>--}}
     {{--<div class="container spark-screen">--}}
