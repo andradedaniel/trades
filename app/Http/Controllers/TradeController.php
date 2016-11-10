@@ -90,7 +90,8 @@ class TradeController extends Controller
         {
             $trade = new Trade();
             $trade->ativo_id = $request->ativo_id;
-            $trade->data = $request->data;
+//            dd($request->data.'----'.\Carbon\Carbon::createFromFormat('d/m/Y',$request->data));
+            $trade->data = \Carbon\Carbon::createFromFormat('d/m/Y',$request->data);//->format('Y-m-d');
             $trade->tipo = $request->tipo;
             $trade->preco_medio = $request->preco;
             $trade->volume = $request->volume;
@@ -117,7 +118,7 @@ class TradeController extends Controller
 
         }
 
-        return redirect()->route('trades.index');
+        return redirect()->route('trades.index',['mes' => '?mes='.\Carbon\Carbon::createFromFormat('d/m/Y',$request->data)->month]);
 
     }
 
@@ -182,9 +183,13 @@ class TradeController extends Controller
         $tradeAberto->volume_aberto -= $tradeOrdem->volume;
         $volFechadoFinal = $tradeAberto->volume - $tradeAberto->volume_aberto;
 
+//        $tradeAberto->resultado = ((($tradeAberto->resultado * $volFechadoAntes)
+//                                    + (( $tradeAberto->preco_medio - $tradeOrdem->preco) * $tradeOrdem->volume))
+//                                    / $volFechadoFinal) * $invertForBuy;
+
         $tradeAberto->resultado = ((($tradeAberto->resultado * $volFechadoAntes)
-                                    + (( $tradeAberto->preco_medio - $tradeOrdem->preco) * $tradeOrdem->volume))
-                                    / $volFechadoFinal) * $invertForBuy;
+                                    + ((( $tradeAberto->preco_medio - $tradeOrdem->preco)* $invertForBuy) * $tradeOrdem->volume))
+                                    / $volFechadoFinal) ;
 
         $tradeAberto->lucro_prejuizo_bruto += $tradeOrdem->lucro_prejuizo_bruto;
         $tradeAberto->lucro_prejuizo_liquido += $tradeOrdem->lucro_prejuizo_bruto;

@@ -84,7 +84,26 @@
 				</div>
 				<!-- /.box-header -->
 				<div class="box-body text-center">
-					<div id="lucro_ano" class="sparkline" data-type="pie" data-offset="90" data-width="100px" data-height="100px"></div>
+					<div id="lucro_ano" class="sparkline" data-type="bar" data-offset="90" data-width="100px" data-height="100px"></div>
+				</div>
+				<!-- /.box-body -->
+			</div>
+			<!-- /.box -->
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+{{--			{{dd($lucro_ano)}}--}}
+			<div class="box box-solid">
+				<div class="box-header">
+					<h3 class="box-title text-danger">Pontos Positivos e Negativos em 2016</h3>
+					{{--<div class="box-tools pull-right">--}}
+					{{--<button type="button" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>--}}
+					{{--</div>--}}
+				</div>
+				<!-- /.box-header -->
+				<div class="box-body text-center">
+					<div id="pontos_posit_negat" class="sparkline" data-type="bar" data-offset="90" data-width="100px" data-height="100px"></div>
 				</div>
 				<!-- /.box-body -->
 			</div>
@@ -210,19 +229,128 @@
 				title: {
 					text: null
 				},
+				yAxis: {
+					title: {
+						text: 'Reais (R$)'
+					}
+				},
 				xAxis: {
 					categories: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 				},
 				credits: {
 					enabled: false
 				},
+				plotOptions: {
+					column: {
+						dataLabels: {
+							enabled: true
+						},
+//						enableMouseTracking: false
+					}
+				},
+				tooltip: {
+					pointFormat: "R$ {point.y:.2f}"
+				},
 				series: [{
-					name: 'Lucro: R$',
-					data: lucro_ano
-				}
-					]
+					name: 'Lucro',
+					data: lucro_ano,
+					zones: [{
+						value: 0,
+						color: '#f7a35c'
+					}]
+				}]
 			});
 
+		});
+
+
+		$(function () {
+			var total_pontos_positivos = <?php echo $total_pontos_positivos; ?>;
+			var total_pontos_negativos = <?php echo $total_pontos_negativos; ?>;
+			Highcharts.chart('pontos_posit_negat', {
+				title: {
+					text: ''
+				},
+				xAxis: {
+					categories: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+				},
+				yAxis: {
+					title: {
+						text: 'Pontos'
+					}
+				},
+//				labels: {
+//					items: [{
+//						html: 'Total fruit consumption',
+//						style: {
+//							left: '50px',
+//							top: '18px',
+//							color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+//						}
+//					}]
+//				},
+				plotOptions: {
+					column: {
+						dataLabels: {
+							enabled: true
+						},
+//						enableMouseTracking: false
+					}
+				},
+				series: [{
+					type: 'column',
+					name: 'Positivo',
+					data: total_pontos_positivos
+				}, {
+					type: 'column',
+					color: 'red',
+					name: 'Negativo',
+					data: total_pontos_negativos
+				},
+//					{
+//					type: 'spline',
+//					name: 'Average',
+//					data: [3, 2.67, 3, 6.33, 3.33],
+//					marker: {
+//						lineWidth: 2,
+//						lineColor: Highcharts.getOptions().colors[4],
+//						fillColor: 'white'
+//					}
+//				},  {
+//					type: 'spline',
+//					name: 'Averagex',
+//					data: [4, 15, 3, 8, 7],
+//					marker: {
+//						lineWidth: 2,
+//						lineColor: Highcharts.getOptions().colors[3],
+//						fillColor: 'white'
+//					}
+//				},
+//					{
+//					type: 'pie',
+//					name: 'Total consumption',
+//					data: [{
+//						name: 'Jane',
+//						y: 13,
+//						color: Highcharts.getOptions().colors[0] // Jane's color
+//					}, {
+//						name: 'John',
+//						y: 23,
+//						color: Highcharts.getOptions().colors[1] // John's color
+//					}, {
+//						name: 'Joe',
+//						y: 19,
+//						color: Highcharts.getOptions().colors[2] // Joe's color
+//					}],
+//					center: [100, 80],
+//					size: 100,
+//					showInLegend: false,
+//					dataLabels: {
+//						enabled: false
+//					}
+//				}
+				]
+			});
 		});
 
 

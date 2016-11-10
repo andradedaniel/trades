@@ -36,19 +36,13 @@ class HomeController extends Controller
      */
     public function index()
     {
-        //TODO: buscar apenas trades fechados
+        // QTD DE TRADES COM RESULTADO (LUCRO) POSITIVO E NEGATIVO
 //        $totalTrades = Auth::user()->trades()->count();
-        $totalTradesPositivos = Auth::user()->trades()->where('lucro_prejuizo_bruto', '>',0)->count();
-        $totalTradesNegativos = Auth::user()->trades()->where('lucro_prejuizo_bruto', '<',0)->count();
+        $totalTradesPositivos = Auth::user()->trades()->where('lucro_prejuizo_bruto', '>',0)->where('trade_aberto', '=',0)->count();
+        $totalTradesNegativos = Auth::user()->trades()->where('lucro_prejuizo_bruto', '<',0)->where('trade_aberto', '=',0)->count();
 
-        //total de trades na venda + % de acerto
-        $totalTradesVenda = [];
-        $totalTradesVenda['total'] = Auth::user()->trades()->where('tipo', '=','sell')->count();
-        $totalTradesVenda['totalComLucro'] = Auth::user()->trades()->where('tipo', '=','sell')
-                                                                    ->where('lucro_prejuizo_bruto', '>',0)
-                                                                    ->count();
-
-        // lucro liquido por mes
+        // LUCRO LIQUIDO POR MES DURANTE O ANO
+        //TODO: permitir escolher o periodo na tela
         $ano=2016;
         $lucro_ano_temp = Auth::user()->trades()->select(\DB::raw("SUM(lucro_prejuizo_liquido) as total_lucro, month(data) as mes"))
                 ->where(\DB::raw("year(data)"),'=',$ano)
@@ -66,8 +60,54 @@ class HomeController extends Controller
         }
         $lucro_ano = array_column( $lucro_ano, 'valor');
 
+
+        // MEDIA DE PONTOS EM TRADES POSITIVOS E NEGATIVOS
+        $media_pontos_positivos_temp = Auth::user()->trades()->select(\DB::raw("SUM(resultado) as media_resultado, month(data) as mes"))
+            ->where('resultado', '>',0)
+            ->where(\DB::raw("year(data)"),'=',$ano)
+            ->groupBy(\DB::raw("month(data)"))
+            ->get()->toArray();
+//        dd($media_pontos_positivos_temp);
+        $media_pontos_positivos_temp = array_column( $media_pontos_positivos_temp, 'media_resultado', 'mes');
+        for ($i=1;$i<=12;$i++){
+            if ( ! isset($media_pontos_positivos_temp[$i])){
+                $media_pontos_positivos[$i]['valor'] = 0;
+            }else{
+                $media_pontos_positivos[$i]['valor'] = $media_pontos_positivos_temp[$i];
+            }
+        }
+        $media_pontos_positivos = array_column( $media_pontos_positivos, 'valor');
+
+
+        $media_pontos_negativos_temp = Auth::user()->trades()->select(\DB::raw("SUM(resultado) as media_resultado, month(data) as mes"))
+            ->where('resultado', '<',0)
+            ->where(\DB::raw("year(data)"),'=',$ano)
+            ->groupBy(\DB::raw("month(data)"))
+            ->get()->toArray();
+//        dd($media_pontos_positivos_temp);
+        $media_pontos_negativos_temp = array_column( $media_pontos_negativos_temp, 'media_resultado', 'mes');
+        for ($i=1;$i<=12;$i++){
+            if ( ! isset($media_pontos_negativos_temp[$i])){
+                $media_pontos_negativos[$i]['valor'] = 0;
+            }else{
+                $media_pontos_negativos[$i]['valor'] = $media_pontos_negativos_temp[$i]*-1;
+            }
+        }
+        $media_pontos_negativos = array_column( $media_pontos_negativos, 'valor');
+
+//dd($media_pontos_positivos);
+
+
+
+
 //        dd($lucro_ano);
 
+        //total de trades na venda + % de acerto
+        $totalTradesVenda = [];
+        $totalTradesVenda['total'] = Auth::user()->trades()->where('tipo', '=','sell')->count();
+        $totalTradesVenda['totalComLucro'] = Auth::user()->trades()->where('tipo', '=','sell')
+            ->where('lucro_prejuizo_bruto', '>',0)
+            ->count();
 
         //total de trades na compra + % de acerto
         //total de pontos positivo
@@ -86,6 +126,8 @@ class HomeController extends Controller
                 ->with('totalTradesPositivos',json_encode($totalTradesPositivos,JSON_NUMERIC_CHECK))
                 ->with('totalTradesNegativos',json_encode($totalTradesNegativos,JSON_NUMERIC_CHECK))
                 ->with('lucro_ano',json_encode($lucro_ano,JSON_NUMERIC_CHECK))
+                ->with('total_pontos_positivos',json_encode($media_pontos_positivos,JSON_NUMERIC_CHECK))
+                ->with('total_pontos_negativos',json_encode($media_pontos_negativos,JSON_NUMERIC_CHECK))
                 ->with('totalTradesVenda',$totalTradesVenda);
     }
 }

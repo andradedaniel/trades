@@ -8,7 +8,9 @@
 <script src="{{ asset('/js/app.min.js') }}" type="text/javascript"></script>
 <!-- HighCharts -->
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="{{ asset('/plugins/iCheck/icheck.min.js') }}" type="text/javascript"></script>
+{{--<script src="{{ asset('/plugins/iCheck/icheck.min.js') }}" type="text/javascript"></script>--}}
+<script src="{{ asset('/plugins/datepicker/bootstrap-datepicker.js') }}" type="text/javascript"></script>
+<script src="{{ asset('/plugins/datepicker/locales/bootstrap-datepicker.pt-BR.js') }}" type="text/javascript"></script>
 
 <!-- Optionally, you can add Slimscroll and FastClick plugins.
       Both of these plugins are recommended to enhance the
